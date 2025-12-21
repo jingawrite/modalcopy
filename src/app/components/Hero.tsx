@@ -7,7 +7,7 @@ export function Hero({ onStartClick }: HeroProps) {
     <section className="max-w-[800px] mx-auto px-6 py-20 text-center">
       <h1 className="mb-4">모달 문구, 10초 만에 3가지 스타일 완성</h1>
       <p className="text-lg text-muted-foreground mb-6">
-        상황만 말해주세요. 토스·당근·Dropbox 3가지 브랜드 톤앤매너로 바로 생성해드려요.
+        상황만 말해주세요. 토스·당근·드랍박스 3가지 브랜드 톤앤매너로 바로 생성해드려요.
       </p>
       
       {/* 브랜드 로고 영역 */}
@@ -28,7 +28,7 @@ export function Hero({ onStartClick }: HeroProps) {
           <div className="w-16 h-16 bg-[#0061FF] rounded-lg flex items-center justify-center text-white font-bold text-xs">
             Dropbox
           </div>
-          <span className="text-sm text-muted-foreground text-center">Dropbox 스타일</span>
+          <span className="text-sm text-muted-foreground text-center">드랍박스 스타일</span>
         </div>
       </div>
       

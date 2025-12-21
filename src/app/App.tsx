@@ -11,7 +11,7 @@ type ModalType =
   | "경고"
   | "정보"
   | "기타";
-type BrandStyle = "토스 스타일" | "당근 스타일" | "Dropbox 스타일";
+type BrandStyle = "토스 스타일" | "당근 스타일" | "드랍박스 스타일";
 
 interface GeneratedCopy {
   brandStyle: BrandStyle;
@@ -85,7 +85,7 @@ const copyTemplates = {
         body: "이제 동네 이웃들과 함께해요. 편하게 둘러보세요.",
         buttonText: "둘러보기",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "회원가입이 완료되었습니다",
         body: "계정이 성공적으로 생성되었습니다. 로그인 후 서비스를 이용하실 수 있습니다.",
         buttonText: "확인",
@@ -102,7 +102,7 @@ const copyTemplates = {
         body: "곧 배송 준비할게요. 마이페이지에서 확인해보세요.",
         buttonText: "확인하기",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "결제가 완료되었습니다",
         body: "결제 내역은 이메일로 전송되었습니다. 주문 번호를 통해 배송 현황을 확인하실 수 있습니다.",
         buttonText: "확인",
@@ -119,7 +119,7 @@ const copyTemplates = {
         body: "포인트가 들어왔어요. 확인해보세요.",
         buttonText: "확인",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "포인트 적립 완료",
         body: "포인트가 성공적으로 적립되었습니다. 내역을 확인해주세요.",
         buttonText: "확인",
@@ -136,7 +136,7 @@ const copyTemplates = {
         body: "주문이 접수됐어요. 곧 준비할게요.",
         buttonText: "확인하기",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "주문이 완료되었습니다",
         body: "주문이 성공적으로 접수되었습니다. 주문 내역을 확인해주세요.",
         buttonText: "확인",
@@ -153,7 +153,7 @@ const copyTemplates = {
         body: "리뷰 감사해요. 다른 이웃들에게 도움이 될 거예요.",
         buttonText: "확인",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "리뷰 작성 완료",
         body: "리뷰가 성공적으로 등록되었습니다. 감사합니다.",
         buttonText: "확인",
@@ -170,7 +170,7 @@ const copyTemplates = {
         body: "친구에게 초대 메시지 보냈어요. 함께 쓰면 더 좋아요.",
         buttonText: "확인",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "초대 완료",
         body: "초대 메시지가 성공적으로 전송되었습니다.",
         buttonText: "확인",
@@ -188,7 +188,7 @@ const copyTemplates = {
         body: "요청하신 작업이 완료되었어요. 확인해보세요.",
         buttonText: "확인",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "작업이 완료되었습니다",
         body: "요청하신 작업이 성공적으로 처리되었습니다.",
         buttonText: "확인",
@@ -207,7 +207,7 @@ const copyTemplates = {
         body: "다시 한 번 입력해보세요. 까먹으셨다면 재설정하시면 돼요.",
         buttonText: "재시도",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "비밀번호 오류",
         body: "입력하신 비밀번호가 일치하지 않습니다. 다시 시도해주시기 바랍니다.",
         buttonText: "확인",
@@ -224,7 +224,7 @@ const copyTemplates = {
         body: "Wi-Fi나 데이터 연결 확인하고 다시 해보세요.",
         buttonText: "재시도",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "네트워크 오류",
         body: "네트워크 연결 상태를 확인하신 후 다시 시도해주시기 바랍니다.",
         buttonText: "확인",
@@ -241,7 +241,7 @@ const copyTemplates = {
         body: "결제가 안 됐어요. 카드 정보 확인하고 다시 해보세요.",
         buttonText: "재시도",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "결제 실패",
         body: "결제 처리 중 오류가 발생했습니다. 카드 정보를 확인하고 다시 시도해주시기 바랍니다.",
         buttonText: "확인",
@@ -258,7 +258,7 @@ const copyTemplates = {
         body: "입력하신 정보가 일치하지 않아요. 다시 확인해보세요.",
         buttonText: "재시도",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "입력 정보 불일치",
         body: "입력하신 정보가 일치하지 않습니다. 다시 확인해주시기 바랍니다.",
         buttonText: "확인",
@@ -275,7 +275,7 @@ const copyTemplates = {
         body: "선택하신 상품 재고가 없어요. 다른 상품 선택해보세요.",
         buttonText: "확인",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "재고 부족",
         body: "선택하신 상품의 재고가 부족합니다. 다른 상품을 선택해주시기 바랍니다.",
         buttonText: "확인",
@@ -292,7 +292,7 @@ const copyTemplates = {
         body: "파일 업로드가 안 됐어요. 파일 크기나 형식 확인하고 다시 해보세요.",
         buttonText: "재시도",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "파일 업로드 실패",
         body: "파일 업로드 중 오류가 발생했습니다. 파일 크기 및 형식을 확인하고 다시 시도해주시기 바랍니다.",
         buttonText: "확인",
@@ -309,7 +309,7 @@ const copyTemplates = {
         body: "이미 사용 중인 아이디예요. 다른 아이디 선택해보세요.",
         buttonText: "재시도",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "아이디 중복",
         body: "입력하신 아이디는 이미 사용 중입니다. 다른 아이디를 선택해주시기 바랍니다.",
         buttonText: "확인",
@@ -326,7 +326,7 @@ const copyTemplates = {
         body: "예상치 못한 문제가 생겼네요. 다시 시도해주시겠어요?",
         buttonText: "재시도",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "오류가 발생했습니다",
         body: "일시적인 문제가 발생했습니다. 잠시 후 다시 시도해주시기 바랍니다.",
         buttonText: "확인",
@@ -345,7 +345,7 @@ const copyTemplates = {
         body: "삭제하면 복구 안 돼요. 괜찮죠?",
         buttonText: "삭제",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "삭제 확인",
         body: "해당 게시물을 삭제하시겠습니까? 삭제된 내용은 복구할 수 없습니다.",
         buttonText: "삭제",
@@ -362,7 +362,7 @@ const copyTemplates = {
         body: "모든 데이터 다 사라져요. 진짜 탈퇴할까요?",
         buttonText: "탈퇴",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "계정 탈퇴 확인",
         body: "계정 탈퇴 시 모든 개인정보 및 이용 기록이 영구 삭제됩니다. 탈퇴하시겠습니까?",
         buttonText: "탈퇴",
@@ -379,7 +379,7 @@ const copyTemplates = {
         body: "결제 취소하면 주문도 취소돼요. 정말 할까요?",
         buttonText: "취소",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "결제 취소 확인",
         body: "결제를 취소하시겠습니까? 취소 시 주문이 함께 취소됩니다.",
         buttonText: "취소",
@@ -396,7 +396,7 @@ const copyTemplates = {
         body: "여러 개를 한 번에 처리하는 거예요. 진행할까요?",
         buttonText: "진행",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "대량 작업 확인",
         body: "여러 항목을 한 번에 처리하는 작업입니다. 진행하시겠습니까?",
         buttonText: "확인",
@@ -413,7 +413,7 @@ const copyTemplates = {
         body: "동의 철회하면 일부 기능을 못 써요. 정말 할까요?",
         buttonText: "철회",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "개인정보 동의 철회 확인",
         body: "개인정보 동의를 철회하시겠습니까? 일부 서비스 이용이 제한될 수 있습니다.",
         buttonText: "확인",
@@ -430,7 +430,7 @@ const copyTemplates = {
         body: "이대로 할까요?",
         buttonText: "확인",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "확인",
         body: "해당 작업을 진행하시겠습니까?",
         buttonText: "확인",
@@ -449,7 +449,7 @@ const copyTemplates = {
         body: "쿠폰이 곧 만료될 예정이에요. 빨리 사용하세요.",
         buttonText: "확인",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "쿠폰 만료 임박",
         body: "사용하신 쿠폰이 곧 만료될 예정입니다. 만료 전에 사용해주시기 바랍니다.",
         buttonText: "확인",
@@ -466,7 +466,7 @@ const copyTemplates = {
         body: "의심스러운 활동이 있어요. 비밀번호 변경해주세요.",
         buttonText: "비밀번호 변경",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "보안 위험 감지",
         body: "의심스러운 활동이 감지되었습니다. 비밀번호를 변경해주시기 바랍니다.",
         buttonText: "확인",
@@ -483,7 +483,7 @@ const copyTemplates = {
         body: "오늘 사용량이 많아요. 나중에 다시 해보세요.",
         buttonText: "확인",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "사용량 초과",
         body: "일일 사용량을 초과하였습니다. 잠시 후 다시 시도해주시기 바랍니다.",
         buttonText: "확인",
@@ -500,7 +500,7 @@ const copyTemplates = {
         body: "이 콘텐츠는 연령 제한 때문에 볼 수 없어요.",
         buttonText: "확인",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "콘텐츠 접근 제한",
         body: "이 콘텐츠는 연령 제한으로 인해 접근할 수 없습니다.",
         buttonText: "확인",
@@ -517,7 +517,7 @@ const copyTemplates = {
         body: "이거 확인하고 진행하세요.",
         buttonText: "알겠어요",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "경고",
         body: "주의가 필요한 상황입니다. 확인 후 진행해주시기 바랍니다.",
         buttonText: "확인",
@@ -536,7 +536,7 @@ const copyTemplates = {
         body: "새 기능 추가됐어요. 한번 써보세요!",
         buttonText: "보러가기",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "기능 업데이트 안내",
         body: "서비스 개선을 위해 새로운 기능이 추가되었습니다. 업데이트 내용을 확인해주세요.",
         buttonText: "확인",
@@ -553,7 +553,7 @@ const copyTemplates = {
         body: "서비스 개선을 위해 약관이 변경될 예정이에요. 한번 확인해보세요.",
         buttonText: "확인하기",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "이용약관 변경 안내",
         body: "서비스 개선을 위해 이용약관이 개정될 예정입니다. 변경 사항을 확인해주시기 바랍니다.",
         buttonText: "확인",
@@ -570,7 +570,7 @@ const copyTemplates = {
         body: "이 기능 쓰려면 권한이 필요해요. 허용해주시면 더 편하게 쓸 수 있어요.",
         buttonText: "허용하기",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "권한 요청",
         body: "이 기능을 사용하기 위해 권한이 필요합니다. 권한을 허용해주시기 바랍니다.",
         buttonText: "허용",
@@ -587,7 +587,7 @@ const copyTemplates = {
         body: "새 버전이 나왔어요. 업데이트하시면 더 좋은 기능을 쓸 수 있어요.",
         buttonText: "업데이트",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "업데이트 안내",
         body: "새로운 버전이 출시되었습니다. 업데이트하시면 개선된 기능을 이용하실 수 있습니다.",
         buttonText: "업데이트",
@@ -604,7 +604,7 @@ const copyTemplates = {
         body: "이거 한번 봐주세요.",
         buttonText: "확인",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "안내",
         body: "중요한 안내사항이 있습니다. 확인 부탁드립니다.",
         buttonText: "확인",
@@ -623,7 +623,7 @@ const copyTemplates = {
         body: "체크해보세요.",
         buttonText: "확인",
       },
-      "Dropbox 스타일": {
+      "드랍박스 스타일": {
         title: "알림",
         body: "확인이 필요한 사항입니다.",
         buttonText: "확인",
@@ -640,7 +640,7 @@ function generateCopy(
   const brandStyles: BrandStyle[] = [
     "토스 스타일",
     "당근 스타일",
-    "Dropbox 스타일",
+    "드랍박스 스타일",
   ];
 
   // Normalize situation for lookup (remove spaces)
@@ -755,7 +755,7 @@ export default function App() {
                 #당근: 동네, 이웃, 편안함, 솔직함, 따뜻함
               </span>
               <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs">
-                #Dropbox: 단순함, 신뢰성, 차분함, 프로페셔널, 명료함
+                #드랍박스: 단순함, 신뢰성, 차분함, 프로페셔널, 명료함
               </span>
             </div>
           </div>

@@ -53,7 +53,7 @@ export function ResultCard({ brandStyle, title, body, buttonText }: ResultCardPr
   const getBrandColor = (style: string) => {
     if (style.includes("토스")) return "text-[#3182F6]";
     if (style.includes("당근")) return "text-[#FF6F0F]";
-    if (style.includes("Dropbox")) return "text-[#0061FF]";
+    if (style.includes("드랍박스")) return "text-[#0061FF]";
     return "text-[#2563EB]";
   };
 
