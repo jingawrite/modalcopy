@@ -760,84 +760,107 @@ export default function App() {
             </div>
           </div>
           
-          {/* Step 1: Modal Type */}
-          <div className="mb-8">
-            <label className="block mb-3">모달 유형 선택</label>
-            <div className="flex flex-wrap gap-3">
-              {(
-                [
-                  "성공",
-                  "오류",
-                  "확인",
-                  "경고",
-                  "정보",
-                  "기타",
-                ] as ModalType[]
-              ).map((type) => (
-                <label
-                  key={type}
-                  className="flex flex-col gap-1 cursor-pointer"
-                >
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="modalType"
-                      value={type}
-                      checked={modalType === type}
-                      onChange={() =>
-                        handleModalTypeChange(type)
-                      }
-                      className="w-4 h-4 accent-[#2563EB]"
-                    />
-                    <span>{type}</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground ml-6">
-                    {modalTypeExamples[type]}
-                  </span>
-                </label>
-              ))}
-            </div>
-
-            {/* Custom modal type input when "기타" is selected */}
-            {modalType === "기타" && (
-              <textarea
-                value={customModalType}
-                onChange={(e) =>
-                  setCustomModalType(e.target.value)
-                }
-                placeholder="예: 친구 초대, 쿠폰 발급, 파일 다운로드 등"
-                className="mt-4 w-full px-4 py-3 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-[#2563EB] resize-none"
-                rows={2}
-              />
-            )}
-          </div>
-
-          {/* Step 2: Situation Selection */}
-          {modalType !== "기타" && (
-            <div className="mb-8">
-              <label className="block mb-3">상황 선택</label>
-              <div className="flex flex-wrap gap-3">
-                {situationOptions[modalType].map((sit) => (
-                  <label
-                    key={sit}
-                    className="flex items-center gap-2 cursor-pointer"
+          {/* Dual List Selection */}
+          <div className="mb-8 grid grid-cols-2 gap-4">
+            {/* Left: Modal Type List */}
+            <div>
+              <label className="block mb-3 font-medium">모달 유형</label>
+              <div className="border border-border rounded-lg overflow-hidden">
+                {(
+                  [
+                    "성공",
+                    "오류",
+                    "확인",
+                    "경고",
+                    "정보",
+                    "기타",
+                  ] as ModalType[]
+                ).map((type) => (
+                  <div
+                    key={type}
+                    onClick={() => handleModalTypeChange(type)}
+                    className={`px-4 py-3 cursor-pointer border-b border-border last:border-b-0 transition-colors ${
+                      modalType === type
+                        ? "bg-[#2563EB] text-white"
+                        : "bg-white hover:bg-gray-50"
+                    }`}
                   >
-                    <input
-                      type="radio"
-                      name="situation"
-                      value={sit}
-                      checked={situation === sit}
-                      onChange={(e) =>
-                        setSituation(e.target.value)
-                      }
-                      className="w-4 h-4 accent-[#2563EB]"
-                    />
-                    <span>{sit}</span>
-                  </label>
+                    <div className="font-medium">{type}</div>
+                    <div className={`text-xs mt-1 ${
+                      modalType === type ? "text-white/80" : "text-muted-foreground"
+                    }`}>
+                      {modalTypeExamples[type]}
+                    </div>
+                  </div>
                 ))}
               </div>
+
+              {/* Custom modal type input when "기타" is selected */}
+              {modalType === "기타" && (
+                <textarea
+                  value={customModalType}
+                  onChange={(e) =>
+                    setCustomModalType(e.target.value)
+                  }
+                  placeholder="예: 친구 초대, 쿠폰 발급, 파일 다운로드 등"
+                  className="mt-4 w-full px-4 py-3 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-[#2563EB] resize-none"
+                  rows={2}
+                />
+              )}
             </div>
-          )}
+
+            {/* Right: Situation List */}
+            <div>
+              <label className="block mb-3 font-medium">상황 선택</label>
+              {modalType !== "기타" ? (
+                <div className="border border-border rounded-lg overflow-hidden">
+                  {situationOptions[modalType].map((sit) => {
+                    const preview = generateCopy(modalType, sit, "")[0]; // 첫 번째 예시만 (토스 스타일)
+                    const isSelected = situation === sit;
+                    return (
+                      <div key={sit}>
+                        <div
+                          onClick={() => setSituation(sit)}
+                          className={`px-4 py-3 cursor-pointer border-b border-border transition-all duration-200 ${
+                            isSelected
+                              ? "bg-[#2563EB] text-white"
+                              : "bg-white hover:bg-gray-50"
+                          }`}
+                        >
+                          {sit}
+                        </div>
+                        {/* Preview Example - Only show for selected option with animation */}
+                        <div
+                          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                            isSelected
+                              ? "max-h-96 opacity-100"
+                              : "max-h-0 opacity-0"
+                          }`}
+                        >
+                          <div className="px-4 py-3 bg-gray-50 border-b border-border">
+                            <div className={`text-sm font-semibold mb-1 transition-all duration-200 ${
+                              isSelected ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+                            }`}>
+                              {preview.title}
+                            </div>
+                            <div className={`text-xs text-muted-foreground transition-all duration-300 delay-75 ${
+                              isSelected ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+                            }`}>
+                              {preview.body}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="border border-border rounded-lg p-4 text-center text-muted-foreground">
+                  위에서 모달 유형을 입력해주세요
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* Generate Button */}
           <button
