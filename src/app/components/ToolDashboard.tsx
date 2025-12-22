@@ -77,7 +77,7 @@ const tools: Tool[] = [
   {
     name: "UI Bowl",
     description: "웹사이트 UI 패턴 모음",
-    url: "https://uibowl.com",
+    url: "https://uibowl.io/website",
     category: "디자인 & 프로토타이핑",
   },
   
