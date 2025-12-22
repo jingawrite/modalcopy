@@ -86,6 +86,12 @@ const tools: Tool[] = [
     url: "https://shots.so",
     category: "디자인 & 프로토타이핑",
   },
+  {
+    name: "Mobbin",
+    description: "모바일 앱 UI 패턴 탐색",
+    url: "https://mobbin.com/discover/apps/ios/latest",
+    category: "디자인 & 프로토타이핑",
+  },
   
   // 문서 & 협업
   {
