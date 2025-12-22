@@ -106,6 +106,12 @@ const tools: Tool[] = [
     url: "https://featpaper.io",
     category: "문서 & 협업",
   },
+  {
+    name: "IT 서비스 기획자의 섬",
+    description: "화면설계서 작성부터 서비스 오픈까지 프로세스",
+    url: "https://brunch.co.kr/magazine/plannersisland",
+    category: "문서 & 협업",
+  },
   
   // 사용자 리서치
   {
