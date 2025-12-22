@@ -112,6 +112,12 @@ const tools: Tool[] = [
     url: "https://brunch.co.kr/magazine/plannersisland",
     category: "문서 & 협업",
   },
+  {
+    name: "기획서(스토리보드) 작성방법",
+    description: "기획서 작성 방법 가이드",
+    url: "https://smkdir.tistory.com/1",
+    category: "문서 & 협업",
+  },
   
   // 사용자 리서치
   {
