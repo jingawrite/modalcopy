@@ -914,7 +914,7 @@ export default function App() {
               <h2 className="text-xl font-semibold">맞춤법 검사</h2>
             </div>
             <p className="text-sm text-muted-foreground">
-              생성된 문구를 복사하여 아래 입력창에 붙여넣고 맞춤법을 검사하세요. 네이버 맞춤법 검사 API를 사용하여 띄어쓰기, 맞춤법, 표준어 오류를 자동으로 찾아드립니다.
+              생성된 문구를 복사하여 아래 입력창에 붙여넣고 맞춤법을 검사하세요. 네이버 맞춤법 검사기를 사용하여 띄어쓰기, 맞춤법, 표준어 오류를 자동으로 찾아드립니다.
             </p>
           </div>
           <SpellChecker
