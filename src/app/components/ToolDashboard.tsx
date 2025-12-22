@@ -15,27 +15,29 @@ interface Tool {
 const tools: Tool[] = [
   // 프로젝트 관리
   {
+    name: "Notion",
+    description: "올인원 워크스페이스 및 문서 관리",
+    url: "https://notion.so",
+    category: "프로젝트 관리",
+    favorite: true,
+  },
+  {
+    name: "Jira",
+    description: "애자일 프로젝트 관리 및 이슈 추적",
+    url: "https://www.atlassian.com/software/jira",
+    category: "프로젝트 관리",
+    favorite: true,
+  },
+  {
     name: "Trello",
     description: "칸반 보드 방식의 프로젝트 관리 도구",
     url: "https://trello.com",
     category: "프로젝트 관리",
   },
   {
-    name: "Notion",
-    description: "올인원 워크스페이스 및 문서 관리",
-    url: "https://notion.so",
-    category: "프로젝트 관리",
-  },
-  {
     name: "Asana",
     description: "팀 협업 및 작업 관리 플랫폼",
     url: "https://asana.com",
-    category: "프로젝트 관리",
-  },
-  {
-    name: "Jira",
-    description: "애자일 프로젝트 관리 및 이슈 추적",
-    url: "https://www.atlassian.com/software/jira",
     category: "프로젝트 관리",
   },
   
@@ -45,6 +47,7 @@ const tools: Tool[] = [
     description: "협업 UI/UX 디자인 도구",
     url: "https://figma.com",
     category: "디자인 & 프로토타이핑",
+    favorite: true,
   },
   {
     name: "Framer",
@@ -129,6 +132,14 @@ const tools: Tool[] = [
     description: "웹사이트 트래픽 분석",
     url: "https://analytics.google.com",
     category: "분석 & 데이터",
+    favorite: true,
+  },
+  {
+    name: "Google Search Console",
+    description: "웹사이트 검색 성능 모니터링 및 관리",
+    url: "https://search.google.com/search-console",
+    category: "분석 & 데이터",
+    favorite: true,
   },
   {
     name: "Mixpanel",
@@ -142,12 +153,6 @@ const tools: Tool[] = [
     url: "https://amplitude.com",
     category: "분석 & 데이터",
   },
-  {
-    name: "Google Search Console",
-    description: "웹사이트 검색 성능 모니터링 및 관리",
-    url: "https://search.google.com/search-console",
-    category: "분석 & 데이터",
-  },
   
   // 개발 협업
   {
@@ -155,6 +160,7 @@ const tools: Tool[] = [
     description: "코드 저장소 및 버전 관리",
     url: "https://github.com",
     category: "개발 협업",
+    favorite: true,
   },
   {
     name: "GitLab",
