@@ -5,6 +5,7 @@ import { ResultCard } from "./components/ResultCard";
 import { Footer } from "./components/Footer";
 import { SpellChecker } from "./components/SpellChecker";
 import { ToolDashboard } from "./components/ToolDashboard";
+import { SymbolPalette } from "./components/SymbolPalette";
 import { Button } from "./components/ui/button";
 import { cn } from "./components/ui/utils";
 
@@ -679,7 +680,7 @@ function generateCopy(
 }
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<"home" | "tools">("home");
+  const [currentPage, setCurrentPage] = useState<"home" | "tools" | "symbols">("home");
   const [modalType, setModalType] = useState<ModalType>("성공");
   const [situation, setSituation] = useState<string>("");
   const [customModalType, setCustomModalType] =
@@ -743,7 +744,10 @@ export default function App() {
     return (
       <div className="min-h-screen bg-background">
         <Header currentPage={currentPage} onNavigate={setCurrentPage} />
-        <ToolDashboard onNavigateHome={() => setCurrentPage("home")} />
+        <ToolDashboard 
+          onNavigateHome={() => setCurrentPage("home")}
+          onNavigateToSymbols={() => setCurrentPage("symbols")}
+        />
         <Footer />
       </div>
     );

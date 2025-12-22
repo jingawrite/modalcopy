@@ -1,9 +1,9 @@
 import { Button } from "./ui/button";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Hash } from "lucide-react";
 
 interface HeaderProps {
-  currentPage?: "home" | "tools";
-  onNavigate?: (page: "home" | "tools") => void;
+  currentPage?: "home" | "tools" | "symbols";
+  onNavigate?: (page: "home" | "tools" | "symbols") => void;
 }
 
 export function Header({ currentPage = "home", onNavigate }: HeaderProps) {
@@ -18,15 +18,26 @@ export function Header({ currentPage = "home", onNavigate }: HeaderProps) {
             <h2 className="text-primary">모달카피</h2>
           </button>
           {currentPage === "home" && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onNavigate?.("tools")}
-              className="flex items-center gap-2"
-            >
-              <Sparkles className="size-4" />
-              기획약국
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onNavigate?.("symbols")}
+                className="flex items-center gap-2"
+              >
+                <Hash className="size-4" />
+                특수기호
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onNavigate?.("tools")}
+                className="flex items-center gap-2"
+              >
+                <Sparkles className="size-4" />
+                기획약국
+              </Button>
+            </>
           )}
         </div>
         <p className="text-sm text-muted-foreground">Made with ♥ for tired PMs</p>

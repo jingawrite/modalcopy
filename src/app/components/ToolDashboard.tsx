@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Hash } from "lucide-react";
 import { cn } from "./ui/utils";
 
 interface Tool {
@@ -189,9 +189,10 @@ const categories = [
 // 기획약국 페이지에서 홈으로 돌아가기 버튼 추가
 interface ToolDashboardProps {
   onNavigateHome?: () => void;
+  onNavigateToSymbols?: () => void;
 }
 
-export function ToolDashboard({ onNavigateHome }: ToolDashboardProps) {
+export function ToolDashboard({ onNavigateHome, onNavigateToSymbols }: ToolDashboardProps) {
   const getToolsByCategory = (category: string) => {
     const categoryTools = tools.filter((tool) => tool.category === category);
     // 자주 쓰는 도구를 상단으로 정렬
@@ -207,9 +208,20 @@ export function ToolDashboard({ onNavigateHome }: ToolDashboardProps) {
       <div className="max-w-[1600px] mx-auto px-6 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">기획약국</h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground mb-4">
             기획자들이 자주 사용하는 도구들을 한눈에 찾아보세요
           </p>
+          {onNavigateToSymbols && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onNavigateToSymbols}
+              className="flex items-center gap-2"
+            >
+              <Hash className="size-4" />
+              특수기호 모음 바로가기
+            </Button>
+          )}
         </div>
 
         {/* Trello 스타일 보드 레이아웃 - 가로 스크롤 */}
