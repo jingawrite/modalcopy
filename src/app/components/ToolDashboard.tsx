@@ -141,6 +141,12 @@ const tools: Tool[] = [
     url: "https://amplitude.com",
     category: "분석 & 데이터",
   },
+  {
+    name: "Google Search Console",
+    description: "웹사이트 검색 성능 모니터링 및 관리",
+    url: "https://search.google.com/search-console",
+    category: "분석 & 데이터",
+  },
   
   // 개발 협업
   {
