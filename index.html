@@ -136,6 +136,14 @@
     <body>
       <div id="root"></div>
       <script type="module" src="/src/main.tsx"></script>
+      
+      <!-- Channel Talk -->
+      <script>
+        (function(){var w=window;if(w.ChannelIO){return w.console.info("ChannelIO script included twice.");}var ch=function(){ch.c(arguments);};ch.q=[];ch.c=function(args){ch.q.push(args);};w.ChannelIO=ch;function l(){if(w.ChannelIOInitialized){return;}w.ChannelIOInitialized=true;var s=document.createElement("script");s.type="text/javascript";s.async=true;s.src="https://cdn.channel.io/plugin/ch-plugin-web.js";s.charset="UTF-8";var x=document.getElementsByTagName("script")[0];x.parentNode.insertBefore(s,x);}if(document.readyState==="complete"){l();}else if(w.addEventListener){w.addEventListener("DOMContentLoaded",l,false);w.addEventListener("load",l,false);}else{w.attachEvent("onload",l);}})();
+        ChannelIO('boot', {
+          "pluginKey": "2322add3-0be5-426f-9a3a-d042111807e5"
+        });
+      </script>
     </body>
   </html>
   
