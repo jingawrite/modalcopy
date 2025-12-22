@@ -75,24 +75,6 @@ const symbols: Symbol[] = [
     description: "글머리 기호",
     category: "네모",
   },
-  {
-    symbol: "▤",
-    name: "가로선 네모",
-    description: "글머리 기호",
-    category: "네모",
-  },
-  {
-    symbol: "▥",
-    name: "세로선 네모",
-    description: "글머리 기호",
-    category: "네모",
-  },
-  {
-    symbol: "▦",
-    name: "격자 네모",
-    description: "글머리 기호",
-    category: "네모",
-  },
 
   // 원
   {
