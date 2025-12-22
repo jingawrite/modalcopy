@@ -77,6 +77,18 @@ const tools: Tool[] = [
   
   // 문서 & 협업
   {
+    name: "IT 서비스 기획자의 섬",
+    description: "화면설계서 작성부터 서비스 오픈까지 프로세스",
+    url: "https://brunch.co.kr/magazine/plannersisland",
+    category: "문서 & 협업",
+  },
+  {
+    name: "기획서(스토리보드) 작성방법",
+    description: "기획서 작성 방법 가이드",
+    url: "https://smkdir.tistory.com/1",
+    category: "문서 & 협업",
+  },
+  {
     name: "Google Docs",
     description: "온라인 문서 편집 및 협업",
     url: "https://docs.google.com",
@@ -88,35 +100,13 @@ const tools: Tool[] = [
     url: "https://www.atlassian.com/software/confluence",
     category: "문서 & 협업",
   },
-  {
-    name: "Miro",
-    description: "온라인 화이트보드 및 브레인스토밍",
-    url: "https://miro.com",
-    category: "문서 & 협업",
-  },
-  {
-    name: "Mural",
-    description: "디지털 워크스페이스 및 협업",
-    url: "https://www.mural.co",
-    category: "문서 & 협업",
-  },
+  
+  // 마케팅 & 영업
   {
     name: "Featpaper",
     description: "PDF 웹 공유 및 열람 분석",
     url: "https://featpaper.io",
-    category: "문서 & 협업",
-  },
-  {
-    name: "IT 서비스 기획자의 섬",
-    description: "화면설계서 작성부터 서비스 오픈까지 프로세스",
-    url: "https://brunch.co.kr/magazine/plannersisland",
-    category: "문서 & 협업",
-  },
-  {
-    name: "기획서(스토리보드) 작성방법",
-    description: "기획서 작성 방법 가이드",
-    url: "https://smkdir.tistory.com/1",
-    category: "문서 & 협업",
+    category: "마케팅 & 영업",
   },
   
   // 사용자 리서치
@@ -211,6 +201,7 @@ const categories = [
   "프로젝트 관리",
   "디자인 & 프로토타이핑",
   "문서 & 협업",
+  "마케팅 & 영업",
   "사용자 리서치",
   "분석 & 데이터",
   "개발 협업",
