@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Button } from "./ui/button";
+import { cn } from "./ui/utils";
 
 interface ResultCardProps {
   brandStyle: string;
@@ -51,15 +53,15 @@ export function ResultCard({ brandStyle, title, body, buttonText }: ResultCardPr
   };
 
   const getBrandColor = (style: string) => {
-    if (style.includes("토스")) return "text-[#3182F6]";
-    if (style.includes("당근")) return "text-[#FF6F0F]";
-    if (style.includes("드랍박스")) return "text-[#0061FF]";
-    return "text-[#2563EB]";
+    if (style.includes("토스")) return "text-[#3182F6]"; // 브랜드 고유 색상 유지
+    if (style.includes("당근")) return "text-[#FF6F0F]"; // 브랜드 고유 색상 유지
+    if (style.includes("드랍박스")) return "text-[#0061FF]"; // 브랜드 고유 색상 유지
+    return "text-primary"; // 기본값은 CSS 변수 사용
   };
 
   return (
     <div className="bg-white border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-      <h3 className={`${getBrandColor(brandStyle)} mb-4 font-semibold`}>{brandStyle}</h3>
+      <h3 className={cn(getBrandColor(brandStyle), "mb-4 font-semibold")}>{brandStyle}</h3>
       
       <div className="space-y-3 mb-4">
         <div>
@@ -79,30 +81,34 @@ export function ResultCard({ brandStyle, title, body, buttonText }: ResultCardPr
       </div>
       
       <div className="flex gap-2 flex-wrap">
-        <button
+        <Button
           onClick={() => handleCopy(title, "title")}
-          className="px-3 py-1.5 text-sm border border-border rounded hover:bg-accent transition-colors"
+          variant="outline"
+          size="sm"
         >
           {copiedState === "title" ? "복사됨!" : "제목 복사"}
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => handleCopy(body, "body")}
-          className="px-3 py-1.5 text-sm border border-border rounded hover:bg-accent transition-colors"
+          variant="outline"
+          size="sm"
         >
           {copiedState === "body" ? "복사됨!" : "본문 복사"}
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => handleCopy(buttonText, "button")}
-          className="px-3 py-1.5 text-sm border border-border rounded hover:bg-accent transition-colors"
+          variant="outline"
+          size="sm"
         >
           {copiedState === "button" ? "복사됨!" : "버튼 복사"}
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => handleCopy(`${title}\n\n${body}\n\n[${buttonText}]`, "all")}
-          className="px-3 py-1.5 text-sm border border-border rounded hover:bg-accent transition-colors"
+          variant="outline"
+          size="sm"
         >
           {copiedState === "all" ? "복사됨!" : "전체 복사"}
-        </button>
+        </Button>
       </div>
     </div>
   );

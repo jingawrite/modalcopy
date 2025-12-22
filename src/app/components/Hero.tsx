@@ -1,3 +1,5 @@
+import { Button } from "./ui/button";
+
 interface HeroProps {
   onStartClick: () => void;
 }
@@ -36,12 +38,13 @@ export function Hero({ onStartClick }: HeroProps) {
         각 브랜드의 고유한 톤앤매너를 반영한 문구를 한 번에 비교해보세요.
       </p>
       
-      <button
+      <Button
         onClick={onStartClick}
-        className="px-8 py-4 bg-[#2563EB] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors"
+        size="lg"
+        className="px-8"
       >
         지금 시작하기
-      </button>
+      </Button>
     </section>
   );
 }

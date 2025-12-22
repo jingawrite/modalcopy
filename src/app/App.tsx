@@ -3,6 +3,9 @@ import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
 import { ResultCard } from "./components/ResultCard";
 import { Footer } from "./components/Footer";
+import { SpellChecker } from "./components/SpellChecker";
+import { Button } from "./components/ui/button";
+import { cn } from "./components/ui/utils";
 
 type ModalType =
   | "성공"
@@ -779,11 +782,12 @@ export default function App() {
                   <div
                     key={type}
                     onClick={() => handleModalTypeChange(type)}
-                    className={`px-4 py-3 cursor-pointer border-b border-border last:border-b-0 transition-colors ${
+                    className={cn(
+                      "px-4 py-3 cursor-pointer border-b border-border last:border-b-0 transition-colors",
                       modalType === type
-                        ? "bg-[#2563EB] text-white"
-                        : "bg-white hover:bg-gray-50"
-                    }`}
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-white hover:bg-accent"
+                    )}
                   >
                     <div className="font-medium">{type}</div>
                     <div className={`text-xs mt-1 ${
@@ -821,11 +825,12 @@ export default function App() {
                       <div key={sit}>
                         <div
                           onClick={() => setSituation(sit)}
-                          className={`px-4 py-3 cursor-pointer border-b border-border transition-all duration-200 ${
+                          className={cn(
+                            "px-4 py-3 cursor-pointer border-b border-border transition-all duration-200",
                             isSelected
-                              ? "bg-[#2563EB] text-white"
-                              : "bg-white hover:bg-gray-50"
-                          }`}
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-white hover:bg-accent"
+                          )}
                         >
                           {sit}
                         </div>
@@ -863,13 +868,14 @@ export default function App() {
           </div>
 
           {/* Generate Button */}
-          <button
+          <Button
             onClick={handleGenerate}
             disabled={isLoading}
-            className="w-full py-4 bg-[#2563EB] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            size="lg"
+            className="w-full"
           >
             {isLoading ? "생성 중..." : "문구 생성하기"}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -896,6 +902,30 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* Spell Checker Section - 별도 영역 */}
+      <div className="max-w-[800px] mx-auto px-6 mb-12">
+        <div className="bg-white border border-border rounded-lg p-6 shadow-sm">
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                NEW
+              </span>
+              <h2 className="text-xl font-semibold">맞춤법 검사</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              생성된 문구를 복사하여 아래 입력창에 붙여넣고 맞춤법을 검사하세요.
+            </p>
+          </div>
+          <SpellChecker
+            initialText=""
+            maxLength={300}
+            onTextChange={(newText) => {
+              // 텍스트 변경 시 처리 (필요시)
+            }}
+          />
+        </div>
+      </div>
 
       {/* Loading Skeleton */}
       {isLoading && (
