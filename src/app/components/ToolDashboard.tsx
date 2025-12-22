@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { ExternalLink } from "lucide-react";
+import { cn } from "./ui/utils";
 
 interface Tool {
   name: string;
