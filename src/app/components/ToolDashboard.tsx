@@ -63,6 +63,12 @@ const tools: Tool[] = [
     url: "https://www.sketch.com",
     category: "디자인 & 프로토타이핑",
   },
+  {
+    name: "shadcn/ui",
+    description: "재사용 가능한 컴포넌트 라이브러리",
+    url: "https://ui.shadcn.com/docs/components",
+    category: "디자인 & 프로토타이핑",
+  },
   
   // 문서 & 협업
   {
