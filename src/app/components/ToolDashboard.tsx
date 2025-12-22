@@ -193,7 +193,13 @@ interface ToolDashboardProps {
 
 export function ToolDashboard({ onNavigateHome }: ToolDashboardProps) {
   const getToolsByCategory = (category: string) => {
-    return tools.filter((tool) => tool.category === category);
+    const categoryTools = tools.filter((tool) => tool.category === category);
+    // 자주 쓰는 도구를 상단으로 정렬
+    return categoryTools.sort((a, b) => {
+      if (a.favorite && !b.favorite) return -1;
+      if (!a.favorite && b.favorite) return 1;
+      return 0;
+    });
   };
 
   return (
