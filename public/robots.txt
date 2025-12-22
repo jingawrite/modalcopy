@@ -20,6 +20,27 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
+# X (Twitter) / Grok Crawlers
+User-agent: TwitterBot
+Allow: /
+
+User-agent: xai-grok
+Allow: /
+
+User-agent: xai-bot
+Allow: /
+
+# Bing (Grok이 사용할 수 있음)
+User-agent: Bingbot
+Allow: /
+
+# Additional AI Crawlers
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
 # Sitemap
 Sitemap: https://jingawrite.github.io/modalcopy/sitemap.xml
 
