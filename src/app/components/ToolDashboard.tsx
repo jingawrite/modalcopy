@@ -100,6 +100,12 @@ const tools: Tool[] = [
     url: "https://www.mural.co",
     category: "문서 & 협업",
   },
+  {
+    name: "Featpaper",
+    description: "PDF 웹 공유 및 열람 분석",
+    url: "https://featpaper.io",
+    category: "문서 & 협업",
+  },
   
   // 사용자 리서치
   {
