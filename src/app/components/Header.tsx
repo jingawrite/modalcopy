@@ -1,5 +1,6 @@
 import { Button } from "./ui/button";
 import { Sparkles, Hash } from "lucide-react";
+import { cn } from "./ui/utils";
 
 interface HeaderProps {
   currentPage?: "home" | "tools" | "symbols";
