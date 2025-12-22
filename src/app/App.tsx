@@ -904,17 +904,17 @@ export default function App() {
       )}
 
       {/* Spell Checker Section - 별도 영역 */}
-      <div className="max-w-[800px] mx-auto px-6 mb-12">
+      <section className="max-w-[800px] mx-auto px-6 mb-12" aria-label="맞춤법 검사">
         <div className="bg-white border border-border rounded-lg p-6 shadow-sm">
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20" aria-label="신규 기능">
                 NEW
               </span>
               <h2 className="text-xl font-semibold">맞춤법 검사</h2>
             </div>
             <p className="text-sm text-muted-foreground">
-              생성된 문구를 복사하여 아래 입력창에 붙여넣고 맞춤법을 검사하세요.
+              생성된 문구를 복사하여 아래 입력창에 붙여넣고 맞춤법을 검사하세요. 네이버 맞춤법 검사 API를 사용하여 띄어쓰기, 맞춤법, 표준어 오류를 자동으로 찾아드립니다.
             </p>
           </div>
           <SpellChecker
@@ -925,7 +925,7 @@ export default function App() {
             }}
           />
         </div>
-      </div>
+      </section>
 
       {/* Loading Skeleton */}
       {isLoading && (

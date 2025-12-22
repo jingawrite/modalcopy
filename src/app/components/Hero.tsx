@@ -6,10 +6,13 @@ interface HeroProps {
 
 export function Hero({ onStartClick }: HeroProps) {
   return (
-    <section className="max-w-[800px] mx-auto px-6 py-20 text-center">
+    <section className="max-w-[800px] mx-auto px-6 py-20 text-center" aria-label="서비스 소개">
       <h1 className="mb-4">모달 문구, 10초 만에 3가지 스타일 완성</h1>
       <p className="text-lg text-muted-foreground mb-6">
         상황만 말해주세요. 토스·당근·드랍박스 3가지 브랜드 톤앤매너로 바로 생성해드려요.
+      </p>
+      <p className="text-sm text-muted-foreground mb-6">
+        맞춤법 검사 기능으로 생성된 문구의 오류를 바로 확인하고 수정할 수 있습니다.
       </p>
       
       {/* 브랜드 로고 영역 */}
