@@ -51,24 +51,6 @@ const tools: Tool[] = [
     favorite: true,
   },
   {
-    name: "Framer",
-    description: "인터랙티브 프로토타이핑 도구",
-    url: "https://framer.com",
-    category: "디자인 & 프로토타이핑",
-  },
-  {
-    name: "Adobe XD",
-    description: "UX 디자인 및 프로토타이핑",
-    url: "https://www.adobe.com/products/xd.html",
-    category: "디자인 & 프로토타이핑",
-  },
-  {
-    name: "Sketch",
-    description: "벡터 기반 디자인 도구",
-    url: "https://www.sketch.com",
-    category: "디자인 & 프로토타이핑",
-  },
-  {
     name: "shadcn/ui",
     description: "재사용 가능한 컴포넌트 라이브러리",
     url: "https://ui.shadcn.com/docs/components",
