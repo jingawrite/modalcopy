@@ -537,6 +537,80 @@ const symbols: Symbol[] = [
     description: "로마 숫자",
     category: "로마 숫자",
   },
+
+  // 삼각형
+  {
+    symbol: "▲",
+    name: "검은 위쪽 삼각형",
+    description: "위/증가/상승",
+    category: "삼각형",
+  },
+  {
+    symbol: "△",
+    name: "흰 위쪽 삼각형",
+    description: "위/증가/상승",
+    category: "삼각형",
+  },
+  {
+    symbol: "▼",
+    name: "검은 아래쪽 삼각형",
+    description: "아래/감소/하락",
+    category: "삼각형",
+  },
+  {
+    symbol: "▽",
+    name: "흰 아래쪽 삼각형",
+    description: "아래/감소/하락",
+    category: "삼각형",
+  },
+  {
+    symbol: "▶",
+    name: "검은 오른쪽 삼각형",
+    description: "오른쪽/다음/재생",
+    category: "삼각형",
+  },
+  {
+    symbol: "▷",
+    name: "흰 오른쪽 삼각형",
+    description: "오른쪽/다음/재생",
+    category: "삼각형",
+  },
+  {
+    symbol: "◀",
+    name: "검은 왼쪽 삼각형",
+    description: "왼쪽/이전/되돌리기",
+    category: "삼각형",
+  },
+  {
+    symbol: "◁",
+    name: "흰 왼쪽 삼각형",
+    description: "왼쪽/이전/되돌리기",
+    category: "삼각형",
+  },
+  {
+    symbol: "◆",
+    name: "검은 다이아몬드",
+    description: "중요/강조",
+    category: "삼각형",
+  },
+  {
+    symbol: "◇",
+    name: "흰 다이아몬드",
+    description: "중요/강조",
+    category: "삼각형",
+  },
+  {
+    symbol: "◈",
+    name: "체크 다이아몬드",
+    description: "중요/강조",
+    category: "삼각형",
+  },
+  {
+    symbol: "◉",
+    name: "이중 원",
+    description: "중요/강조",
+    category: "삼각형",
+  },
 ];
 
 const categories = [
@@ -554,6 +628,7 @@ const categories = [
   "수학/비교",
   "온도",
   "로마 숫자",
+  "삼각형",
 ];
 
 interface SymbolPaletteProps {
