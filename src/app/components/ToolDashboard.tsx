@@ -103,6 +103,18 @@ const tools: Tool[] = [
   
   // 사용자 리서치
   {
+    name: "Tally",
+    description: "무료 온라인 폼 빌더",
+    url: "https://tally.so",
+    category: "사용자 리서치",
+  },
+  {
+    name: "Maze",
+    description: "사용자 리서치 플랫폼",
+    url: "https://maze.co",
+    category: "사용자 리서치",
+  },
+  {
     name: "UserTesting",
     description: "사용자 테스팅 및 피드백 수집",
     url: "https://www.usertesting.com",
