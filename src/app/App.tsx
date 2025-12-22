@@ -739,6 +739,17 @@ export default function App() {
     }, 100);
   };
 
+  // 특수기호 페이지 렌더링
+  if (currentPage === "symbols") {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header currentPage={currentPage} onNavigate={setCurrentPage} />
+        <SymbolPalette onNavigateToTools={() => setCurrentPage("tools")} />
+        <Footer />
+      </div>
+    );
+  }
+
   // 기획약국 페이지 렌더링
   if (currentPage === "tools") {
     return (
