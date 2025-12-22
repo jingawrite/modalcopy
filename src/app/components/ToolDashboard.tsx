@@ -74,6 +74,12 @@ const tools: Tool[] = [
     url: "https://ui.shadcn.com/docs/components",
     category: "디자인 & 프로토타이핑",
   },
+  {
+    name: "UI Bowl",
+    description: "웹사이트 UI 패턴 모음",
+    url: "https://uibowl.com",
+    category: "디자인 & 프로토타이핑",
+  },
   
   // 문서 & 협업
   {
