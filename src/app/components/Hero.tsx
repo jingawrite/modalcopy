@@ -1,10 +1,12 @@
 import { Button } from "./ui/button";
+import { Sparkles } from "lucide-react";
 
 interface HeroProps {
   onStartClick: () => void;
+  onNavigateToTools?: () => void;
 }
 
-export function Hero({ onStartClick }: HeroProps) {
+export function Hero({ onStartClick, onNavigateToTools }: HeroProps) {
   return (
     <section className="max-w-[800px] mx-auto px-6 py-20 text-center" aria-label="서비스 소개">
       <h1 className="mb-4">모달 문구, 10초 만에 3가지 스타일 완성</h1>
@@ -41,13 +43,26 @@ export function Hero({ onStartClick }: HeroProps) {
         각 브랜드의 고유한 톤앤매너를 반영한 문구를 한 번에 비교해보세요.
       </p>
       
-      <Button
-        onClick={onStartClick}
-        size="lg"
-        className="px-8"
-      >
-        지금 시작하기
-      </Button>
+      <div className="flex gap-4 justify-center">
+        <Button
+          onClick={onStartClick}
+          size="lg"
+          className="px-8"
+        >
+          지금 시작하기
+        </Button>
+        {onNavigateToTools && (
+          <Button
+            onClick={onNavigateToTools}
+            size="lg"
+            variant="outline"
+            className="px-8 flex items-center gap-2"
+          >
+            <Sparkles className="size-4" />
+            기획약국
+          </Button>
+        )}
+      </div>
     </section>
   );
 }

@@ -4,6 +4,7 @@ import { Hero } from "./components/Hero";
 import { ResultCard } from "./components/ResultCard";
 import { Footer } from "./components/Footer";
 import { SpellChecker } from "./components/SpellChecker";
+import { ToolDashboard } from "./components/ToolDashboard";
 import { Button } from "./components/ui/button";
 import { cn } from "./components/ui/utils";
 
@@ -678,6 +679,7 @@ function generateCopy(
 }
 
 export default function App() {
+  const [currentPage, setCurrentPage] = useState<"home" | "tools">("home");
   const [modalType, setModalType] = useState<ModalType>("성공");
   const [situation, setSituation] = useState<string>("");
   const [customModalType, setCustomModalType] =
@@ -736,10 +738,24 @@ export default function App() {
     }, 100);
   };
 
+  // 기획약국 페이지 렌더링
+  if (currentPage === "tools") {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header currentPage={currentPage} onNavigate={setCurrentPage} />
+        <ToolDashboard onNavigateHome={() => setCurrentPage("home")} />
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <Hero onStartClick={handleStartClick} />
+      <Header currentPage={currentPage} onNavigate={setCurrentPage} />
+      <Hero 
+        onStartClick={handleStartClick} 
+        onNavigateToTools={() => setCurrentPage("tools")}
+      />
 
       {/* Main Input Area */}
       <div
