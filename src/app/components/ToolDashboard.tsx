@@ -80,6 +80,12 @@ const tools: Tool[] = [
     url: "https://uibowl.io/website",
     category: "디자인 & 프로토타이핑",
   },
+  {
+    name: "Shots",
+    description: "스크린샷 목업 생성 도구",
+    url: "https://shots.so",
+    category: "디자인 & 프로토타이핑",
+  },
   
   // 문서 & 협업
   {
