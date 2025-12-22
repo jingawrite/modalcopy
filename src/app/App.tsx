@@ -753,7 +753,7 @@ export default function App() {
   // 기획약국 페이지 렌더링
   if (currentPage === "tools") {
     return (
-      <div className="min-h-screen bg-background pt-16">
+      <div className="min-h-screen bg-background">
         <Header currentPage={currentPage} onNavigate={setCurrentPage} />
         <ToolDashboard 
           onNavigateHome={() => setCurrentPage("home")}
@@ -765,7 +765,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-16">
+    <div className="min-h-screen bg-background">
       <Header currentPage={currentPage} onNavigate={setCurrentPage} />
       <Hero 
         onStartClick={handleStartClick} 

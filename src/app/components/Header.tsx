@@ -8,7 +8,7 @@ interface HeaderProps {
 
 export function Header({ currentPage = "home", onNavigate }: HeaderProps) {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-border">
+    <header className="sticky top-0 z-50 bg-white border-b border-border">
       <div className="max-w-[1600px] mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
@@ -17,28 +17,30 @@ export function Header({ currentPage = "home", onNavigate }: HeaderProps) {
           >
             <h2 className="text-primary">모달카피</h2>
           </button>
-          {currentPage === "home" && (
-            <>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onNavigate?.("symbols")}
-                className="flex items-center gap-2"
-              >
-                <Hash className="size-4" />
-                특수기호
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onNavigate?.("tools")}
-                className="flex items-center gap-2"
-              >
-                <Sparkles className="size-4" />
-                기획약국
-              </Button>
-            </>
-          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onNavigate?.("symbols")}
+            className={cn(
+              "flex items-center gap-2",
+              currentPage === "symbols" && "bg-muted"
+            )}
+          >
+            <Hash className="size-4" />
+            특수기호
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onNavigate?.("tools")}
+            className={cn(
+              "flex items-center gap-2",
+              currentPage === "tools" && "bg-muted"
+            )}
+          >
+            <Sparkles className="size-4" />
+            기획약국
+          </Button>
         </div>
         <p className="text-sm text-muted-foreground">Made with ♥ for tired PMs</p>
       </div>
