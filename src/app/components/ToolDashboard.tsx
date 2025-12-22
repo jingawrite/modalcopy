@@ -9,6 +9,7 @@ interface Tool {
   url: string;
   category: string;
   icon?: string;
+  favorite?: boolean; // 자주 쓰는 도구 표시
 }
 
 const tools: Tool[] = [
@@ -224,7 +225,12 @@ export function ToolDashboard({ onNavigateHome }: ToolDashboardProps) {
                   {categoryTools.map((tool) => (
                     <Card
                       key={tool.name}
-                      className="hover:shadow-md transition-all hover:border-primary/50 cursor-pointer bg-white"
+                      className={cn(
+                        "hover:shadow-md transition-all hover:border-primary/50 cursor-pointer",
+                        tool.favorite 
+                          ? "bg-muted/30 border-primary/20 shadow-sm" 
+                          : "bg-white"
+                      )}
                     >
                       <CardHeader className="pb-3">
                         <CardTitle className="text-base leading-tight">
