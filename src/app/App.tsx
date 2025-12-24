@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
 import { ResultCard } from "./components/ResultCard";
@@ -679,8 +679,27 @@ function generateCopy(
   });
 }
 
+// URL 경로에서 페이지 타입 추출
+function getPageFromPath(): "home" | "tools" | "symbols" {
+  const path = window.location.pathname;
+  // GitHub Pages base path 고려
+  if (path.endsWith("/tools") || path.includes("/tools/")) return "tools";
+  if (path.endsWith("/symbols") || path.includes("/symbols/")) return "symbols";
+  return "home";
+}
+
+// Google Analytics 페이지뷰 전송
+function sendPageView(page: string) {
+  if (typeof window !== "undefined" && (window as any).gtag) {
+    (window as any).gtag("config", "G-201M5WQSCM", {
+      page_path: window.location.pathname + window.location.search,
+      page_title: page,
+    });
+  }
+}
+
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<"home" | "tools" | "symbols">("home");
+  const [currentPage, setCurrentPage] = useState<"home" | "tools" | "symbols">(() => getPageFromPath());
   const [modalType, setModalType] = useState<ModalType>("성공");
   const [situation, setSituation] = useState<string>("");
   const [customModalType, setCustomModalType] =
@@ -691,6 +710,45 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   const inputAreaRef = useRef<HTMLDivElement>(null);
+
+  // URL 변경 감지 및 페이지뷰 전송
+  useEffect(() => {
+    const handlePopState = () => {
+      const page = getPageFromPath();
+      setCurrentPage(page);
+      sendPageView(page);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    
+    // 초기 페이지뷰 전송 (약간의 지연을 두어 gtag가 로드될 시간 확보)
+    setTimeout(() => {
+      sendPageView(currentPage);
+    }, 100);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [currentPage]);
+
+  // 페이지 변경 시 URL 업데이트 및 페이지뷰 전송
+  const handlePageChange = (page: "home" | "tools" | "symbols") => {
+    setCurrentPage(page);
+    
+    // 현재 base path 가져오기 (GitHub Pages: /modalcopy/, 로컬: /)
+    const base = import.meta.env.BASE_URL || "/modalcopy/";
+    let path = base;
+    if (page === "tools") path = `${base}tools`;
+    else if (page === "symbols") path = `${base}symbols`;
+    
+    // trailing slash 제거 (홈의 경우만 유지)
+    if (path !== base && path.endsWith("/")) {
+      path = path.slice(0, -1);
+    }
+    
+    window.history.pushState({ page }, "", path);
+    sendPageView(page);
+  };
 
   const handleStartClick = () => {
     inputAreaRef.current?.scrollIntoView({
@@ -743,8 +801,8 @@ export default function App() {
   if (currentPage === "symbols") {
     return (
       <div className="min-h-screen bg-background">
-        <Header currentPage={currentPage} onNavigate={setCurrentPage} />
-        <SymbolPalette onNavigateToTools={() => setCurrentPage("tools")} />
+        <Header currentPage={currentPage} onNavigate={handlePageChange} />
+        <SymbolPalette onNavigateToTools={() => handlePageChange("tools")} />
         <Footer />
       </div>
     );
@@ -754,10 +812,10 @@ export default function App() {
   if (currentPage === "tools") {
     return (
       <div className="min-h-screen bg-background">
-        <Header currentPage={currentPage} onNavigate={setCurrentPage} />
+        <Header currentPage={currentPage} onNavigate={handlePageChange} />
         <ToolDashboard 
-          onNavigateHome={() => setCurrentPage("home")}
-          onNavigateToSymbols={() => setCurrentPage("symbols")}
+          onNavigateHome={() => handlePageChange("home")}
+          onNavigateToSymbols={() => handlePageChange("symbols")}
         />
         <Footer />
       </div>
@@ -766,10 +824,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header currentPage={currentPage} onNavigate={setCurrentPage} />
+      <Header currentPage={currentPage} onNavigate={handlePageChange} />
       <Hero 
         onStartClick={handleStartClick} 
-        onNavigateToTools={() => setCurrentPage("tools")}
+        onNavigateToTools={() => handlePageChange("tools")}
       />
 
       {/* Main Input Area */}
