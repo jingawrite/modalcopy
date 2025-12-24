@@ -682,7 +682,16 @@ function generateCopy(
 // URL 경로에서 페이지 타입 추출
 function getPageFromPath(): "home" | "tools" | "symbols" {
   const path = window.location.pathname;
-  // GitHub Pages base path 고려
+  const search = window.location.search;
+  
+  // GitHub Pages 404 리다이렉트 처리: ?/tools 또는 ?/symbols 형태
+  if (search.startsWith("?/")) {
+    const redirectPath = search.slice(2).split("&")[0].split("~and~")[0];
+    if (redirectPath.includes("tools")) return "tools";
+    if (redirectPath.includes("symbols")) return "symbols";
+  }
+  
+  // 일반 경로 처리
   if (path.endsWith("/tools") || path.includes("/tools/")) return "tools";
   if (path.endsWith("/symbols") || path.includes("/symbols/")) return "symbols";
   return "home";
