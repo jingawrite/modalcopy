@@ -1,33 +1,33 @@
 """
 맞춤법 검사 백엔드 서버
-로컬 py-hanspell-master 폴더의 파일을 직접 사용하여 네이버 맞춤법 검사 API를 호출합니다.
+로컬 py-hanspell-master2 폴더의 파일을 직접 사용하여 네이버 맞춤법 검사 API를 호출합니다.
 """
 import sys
 import os
 from pathlib import Path
 
-# py-hanspell-master 폴더를 Python 경로에 추가
-# server 폴더에서 상위 폴더로 이동한 후 py-hanspell-master 폴더 찾기
+# py-hanspell-master2 폴더를 Python 경로에 추가
+# server 폴더에서 상위 폴더로 이동한 후 py-hanspell-master2 폴더 찾기
 current_dir = Path(__file__).parent.absolute()
 project_root = current_dir.parent.parent
-py_hanspell_path = project_root / 'py-hanspell-master'
+py_hanspell_path = project_root / 'py-hanspell-master2'
 
 if py_hanspell_path.exists():
     sys.path.insert(0, str(py_hanspell_path))
-    print(f"✅ py-hanspell-master 폴더를 경로에 추가했습니다: {py_hanspell_path}")
+    print(f"✅ py-hanspell-master2 폴더를 경로에 추가했습니다: {py_hanspell_path}")
 else:
-    print(f"⚠️  py-hanspell-master 폴더를 찾을 수 없습니다: {py_hanspell_path}")
+    print(f"⚠️  py-hanspell-master2 폴더를 찾을 수 없습니다: {py_hanspell_path}")
     print("   설치된 py-hanspell 패키지를 사용합니다.")
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-# 로컬 py-hanspell-master 폴더에서 직접 import
+# 로컬 py-hanspell-master2 폴더에서 직접 import
 # py-hanspell의 올바른 사용법: from hanspell import spell_checker
 try:
     from hanspell import spell_checker
     hanspell_check = spell_checker.check
-    print("✅ 로컬 py-hanspell-master 파일을 사용합니다.")
+    print("✅ 로컬 py-hanspell-master2 파일을 사용합니다.")
     print(f"   spell_checker 모듈: {spell_checker}")
     print(f"   check 함수: {hanspell_check}")
 except ImportError as e:
@@ -89,7 +89,7 @@ def spell_check_api():
         import xml.etree.ElementTree as ET
         
         try:
-            from hanspell.constants import CheckResult, base_url, passport_key
+            from hanspell.constants import CheckResult, base_url
         except ImportError:
             class CheckResult:
                 PASSED = 0
@@ -97,8 +97,7 @@ def spell_check_api():
                 WRONG_SPACING = 2
                 AMBIGUOUS = 3
                 STATISTICAL_CORRECTION = 4
-            base_url = 'https://ts-proxy.naver.com/ocontent/util/SpellerProxy'
-            passport_key = 'dd5ff43bb7f0e7d958ced4f9c9aee5a6dfef26b9'
+            base_url = 'https://m.search.naver.com/p/csearch/ocontent/util/SpellerProxy'
         
         if len(text) > 500:
             return jsonify({
@@ -118,7 +117,7 @@ def spell_check_api():
             'accept-language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
         }
         
-        url = f'{base_url}?passportKey={passport_key}'
+        url = base_url
         start_time = time.time()
         session = requests.Session()
         r = session.get(url, params=payload, headers=headers, timeout=10)
@@ -129,11 +128,24 @@ def spell_check_api():
         
         data = json.loads(r.text)
         
+        # API 오류 응답 확인
+        if 'message' in data and 'error' in data.get('message', {}):
+            error_msg = data['message']['error']
+            print(f"⚠️  네이버 API 오류: {error_msg}")
+            print(f"   응답 전체: {json.dumps(data, ensure_ascii=False)}")
+            raise Exception(f"네이버 API 오류: {error_msg}")
+        
         if 'message' not in data or 'result' not in data.get('message', {}):
-            raise Exception(f"예상치 못한 API 응답 구조")
+            print(f"⚠️  예상치 못한 API 응답 구조: {json.dumps(data, ensure_ascii=False)}")
+            raise Exception(f"예상치 못한 API 응답 구조: {data}")
         
         html = data['message']['result']['html']
         error_count = data['message']['result'].get('errata_count', 0)
+        
+        # 디버깅: API 응답 로그 출력
+        print(f"✅ 네이버 API 호출 성공")
+        print(f"   오류 개수: {error_count}")
+        print(f"   HTML 길이: {len(html)}")
         
         def _remove_tags(text):
             # <br> 태그를 줄바꿈 문자로 변환
@@ -396,7 +408,9 @@ def _extract_errors_from_html(original: str, checked: str, html: str, error_coun
     # HTML을 파싱하여 오류 위치와 텍스트 추출
     # <em class='green_text'>텍스트</em> 형식의 태그 찾기
     pattern = r"<em class='(red_text|green_text|violet_text|blue_text)'>(.*?)</em>"
-    matches = re.finditer(pattern, html)
+    matches = list(re.finditer(pattern, html))
+    
+    print(f"   HTML에서 찾은 오류 태그 개수: {len(matches)}")
     
     for match in matches:
         error_class = match.group(1)  # red_text, green_text 등
