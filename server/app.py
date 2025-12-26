@@ -591,15 +591,44 @@ def _extract_errors_from_html(original: str, checked: str, html: str, error_coun
         else:
             error_type = "기타"
         
+        # HTML 태그 제거
+        corrected_text_clean = re.sub(r'<[^>]+>', '', corrected_text).strip()
+        corrected_text = corrected_text_clean
+        
+        # 교정된 텍스트가 여러 단어로 구성된 경우, 실제로 변경된 단어만 추출
+        # 원본과 교정된 텍스트를 비교하여 다른 부분만 찾기
+        corrected_words = re.findall(r'\S+', corrected_text)
+        original_words_list = re.findall(r'\S+', original)
+        
+        # 교정된 텍스트의 각 단어가 원본에 있는지 확인
+        # 원본에 없는 단어 또는 원본과 다른 단어를 찾기
+        actual_corrected_word = None
+        for cw in corrected_words:
+            # 원본에서 해당 단어 찾기
+            found_in_original = False
+            for ow in original_words_list:
+                if ow == cw:
+                    found_in_original = True
+                    break
+            if not found_in_original:
+                # 원본에 없는 단어 = 교정된 단어
+                actual_corrected_word = cw
+                break
+        
+        # 원본에 없는 단어를 찾지 못한 경우, 교정된 텍스트의 마지막 단어 사용
+        if not actual_corrected_word and corrected_words:
+            actual_corrected_word = corrected_words[-1]
+        
         # 교정된 텍스트에서 위치 찾기
-        corrected_pos = checked.find(corrected_text)
-        if corrected_pos == -1:
-            # HTML 태그 제거 후 다시 찾기
-            corrected_text_clean = re.sub(r'<[^>]+>', '', corrected_text).strip()
-            corrected_pos = checked.find(corrected_text_clean)
+        if actual_corrected_word:
+            corrected_pos = checked.find(actual_corrected_word)
             if corrected_pos == -1:
                 continue
-            corrected_text = corrected_text_clean
+            corrected_text = actual_corrected_word
+        else:
+            corrected_pos = checked.find(corrected_text)
+            if corrected_pos == -1:
+                continue
         
         # 교정된 텍스트 위치를 원본 위치로 매핑
         orig_idx = 0
@@ -672,27 +701,167 @@ def _extract_errors_from_html(original: str, checked: str, html: str, error_coun
         if not found_original:
             best_match = None
             best_distance = float('inf')
-            for ow in original_words:
-                distance = abs(ow['start'] - estimated_start)
-                if distance < best_distance:
-                    best_distance = distance
-                    best_match = ow
+            best_similarity = 0
             
-            if best_match and best_distance < 15:
+            # 교정된 텍스트와 가장 유사한 원본 단어 찾기
+            for ow in original_words:
+                ow_word = ow['word']
+                distance = abs(ow['start'] - estimated_start)
+                
+                # 교정된 텍스트와 원본 단어의 유사도 계산
+                # 1. 정확히 일치하는 경우 (제외)
+                if ow_word == corrected_text:
+                    continue
+                
+                # 2. 교정된 텍스트가 원본 단어에 포함된 경우
+                if corrected_text in ow_word:
+                    similarity = len(corrected_text) / len(ow_word)
+                    if similarity > best_similarity or (similarity == best_similarity and distance < best_distance):
+                        best_similarity = similarity
+                        best_distance = distance
+                        best_match = ow
+                # 3. 원본 단어가 교정된 텍스트에 포함된 경우
+                elif ow_word in corrected_text:
+                    similarity = len(ow_word) / len(corrected_text)
+                    if similarity > best_similarity or (similarity == best_similarity and distance < best_distance):
+                        best_similarity = similarity
+                        best_distance = distance
+                        best_match = ow
+                # 4. 부분적으로 일치하는 경우 (공통 부분 비율)
+                else:
+                    # 앞에서부터 공통 부분 찾기
+                    common_prefix = 0
+                    min_len = min(len(ow_word), len(corrected_text))
+                    for i in range(min_len):
+                        if ow_word[i] == corrected_text[i]:
+                            common_prefix += 1
+                        else:
+                            break
+                    
+                    # 뒤에서부터 공통 부분 찾기
+                    common_suffix = 0
+                    for i in range(min_len - common_prefix):
+                        if ow_word[-(i+1)] == corrected_text[-(i+1)]:
+                            common_suffix += 1
+                        else:
+                            break
+                    
+                    common_len = common_prefix + common_suffix
+                    
+                    if common_len > 0:
+                        # 공통 부분이 있으면 유사도 계산
+                        similarity = common_len / max(len(ow_word), len(corrected_text))
+                        # 공통 부분이 전체의 30% 이상이면 유사한 것으로 간주
+                        if similarity > 0.3:
+                            if similarity > best_similarity or (similarity == best_similarity and distance < best_distance):
+                                best_similarity = similarity
+                                best_distance = distance
+                                best_match = ow
+                    # 5. 거리만으로 판단 (유사도가 없는 경우)
+                    if best_similarity == 0 and distance < best_distance:
+                        best_distance = distance
+                        if not best_match:
+                            best_match = ow
+            
+            if best_match and (best_similarity > 0.3 or best_distance < 15):
                 found_original = {
                     'word': best_match['word'],
                     'start': best_match['start'],
                     'end': best_match['end']
                 }
         
-        if found_original and found_original['word'] != corrected_text:
-            errors.append({
-                'start': found_original['start'],
-                'end': found_original['end'],
-                'original': found_original['word'],
-                'suggestions': [corrected_text],
-                'errorType': error_type
-            })
+        if found_original:
+            # 원본 단어와 교정된 텍스트가 다른 경우에만 오류로 추가
+            original_word = found_original['word']
+            
+            # 교정된 텍스트가 원본 단어에 포함되어 있거나, 원본 단어가 교정된 텍스트에 포함되어 있는 경우
+            # 실제로 다른 부분만 추출
+            if original_word != corrected_text:
+                # 원본 단어에서 교정된 텍스트와 다른 부분 찾기
+                # 예: "안되요" -> "안돼요"인 경우, "되요" 부분만 추출
+                original_start = found_original['start']
+                original_end = found_original['end']
+                
+                # 교정된 텍스트가 원본 단어의 일부인 경우 (예: "안되요" -> "안돼요")
+                # 또는 원본 단어가 교정된 텍스트의 일부인 경우
+                # 정확한 오류 부분만 추출
+                if corrected_text in original_word:
+                    # 교정된 텍스트가 원본 단어에 포함된 경우
+                    # 원본 단어에서 교정된 텍스트 위치 찾기
+                    corrected_pos_in_original = original_word.find(corrected_text)
+                    if corrected_pos_in_original != -1:
+                        # 교정된 텍스트 앞부분이 오류일 수 있음
+                        if corrected_pos_in_original > 0:
+                            # 앞부분이 오류
+                            error_start = original_start + corrected_pos_in_original
+                            error_end = original_end
+                            error_text = original_word[corrected_pos_in_original:]
+                        else:
+                            # 뒷부분이 오류
+                            error_start = original_start
+                            error_end = original_start + corrected_pos_in_original + len(corrected_text)
+                            error_text = original_word[:corrected_pos_in_original] + original_word[corrected_pos_in_original + len(corrected_text):]
+                    else:
+                        # 교정된 텍스트와 원본 단어가 완전히 다른 경우
+                        error_start = original_start
+                        error_end = original_end
+                        error_text = original_word
+                elif original_word in corrected_text:
+                    # 원본 단어가 교정된 텍스트에 포함된 경우
+                    # 원본 단어 전체가 오류
+                    error_start = original_start
+                    error_end = original_end
+                    error_text = original_word
+                else:
+                    # 교정된 텍스트와 원본 단어가 부분적으로 겹치는 경우
+                    # 예: "안되요" vs "안돼요" -> 전체 단어를 오류로 표시
+                    # 공통 부분이 전체의 50% 이상이면 전체 단어를 오류로 표시
+                    common_prefix = 0
+                    common_suffix = 0
+                    
+                    # 앞에서부터 공통 부분 찾기
+                    min_len = min(len(original_word), len(corrected_text))
+                    for i in range(min_len):
+                        if original_word[i] == corrected_text[i]:
+                            common_prefix += 1
+                        else:
+                            break
+                    
+                    # 뒤에서부터 공통 부분 찾기
+                    for i in range(min_len - common_prefix):
+                        if original_word[-(i+1)] == corrected_text[-(i+1)]:
+                            common_suffix += 1
+                        else:
+                            break
+                    
+                    common_len = common_prefix + common_suffix
+                    common_ratio = common_len / max(len(original_word), len(corrected_text)) if max(len(original_word), len(corrected_text)) > 0 else 0
+                    
+                    # 공통 부분이 전체의 30% 이상이면 전체 단어를 오류로 표시
+                    # (예: "안되요" vs "안돼요" -> "안"이 공통이므로 전체 단어를 오류로 표시)
+                    if common_ratio >= 0.3:
+                        # 전체 단어를 오류로 표시
+                        error_start = original_start
+                        error_end = original_end
+                        error_text = original_word
+                    elif common_prefix + common_suffix < len(original_word):
+                        # 공통 부분이 적으면 공통 부분을 제외한 부분만 오류로 표시
+                        error_start = original_start + common_prefix
+                        error_end = original_end - common_suffix
+                        error_text = original_word[common_prefix:len(original_word)-common_suffix]
+                    else:
+                        # 전체가 오류
+                        error_start = original_start
+                        error_end = original_end
+                        error_text = original_word
+                
+                errors.append({
+                    'start': error_start,
+                    'end': error_end,
+                    'original': error_text,
+                    'suggestions': [corrected_text],
+                    'errorType': error_type
+                })
     
     return errors
 
