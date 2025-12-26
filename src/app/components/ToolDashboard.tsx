@@ -333,4 +333,3 @@ export function ToolDashboard({ onNavigateHome, onNavigateToSymbols }: ToolDashb
     </div>
   );
 }
-
