@@ -100,6 +100,12 @@ const tools: Tool[] = [
     url: "https://www.atlassian.com/software/confluence",
     category: "문서 & 협업",
   },
+  {
+    name: "나라 맞춤법 검사기",
+    description: "한글 맞춤법 검사 서비스",
+    url: "https://nara-speller.co.kr/speller/",
+    category: "문서 & 협업",
+  },
   
   // 마케팅 & 영업
   {
