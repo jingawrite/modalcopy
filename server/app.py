@@ -43,6 +43,85 @@ except ImportError as e:
 app = Flask(__name__)
 CORS(app)  # CORS 허용
 
+# passport key를 메모리에 저장 (실제 운영 환경에서는 Redis 등 사용 권장)
+_passport_key_cache = None
+
+@app.route('/passportKey', methods=['GET'])
+def get_passport_key():
+    """
+    네이버 맞춤법 검사기 passport key 발급 엔드포인트
+    제공된 코드 방식: 네이버 검색 페이지에서 맞춤법검사기 검색 후 passport key 추출
+    """
+    global _passport_key_cache
+    
+    try:
+        import requests
+        import re
+        from urllib.parse import unquote
+        
+        # 네이버 검색 페이지에서 맞춤법검사기 검색하여 passport key 획득
+        # 제공된 코드 방식 사용
+        headers = {
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'accept-language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+        }
+        
+        session = requests.Session()
+        
+        # 네이버 검색 페이지에서 맞춤법검사기 검색
+        # 제공된 코드의 URL 형식 사용
+        search_url = 'https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=맞춤법검사기'
+        response = session.get(search_url, headers=headers, timeout=10)
+        
+        if response.status_code != 200:
+            raise Exception(f"네이버 검색 페이지 접근 실패: HTTP {response.status_code}")
+        
+        # 응답 데이터에서 passport key 추출
+        # 제공된 코드의 정규식 패턴 사용: /passportKey=([a-zA-Z0-9]+)/
+        response_data = response.text
+        match = re.search(r'passportKey=([a-zA-Z0-9]+)', response_data)
+        
+        passport_key = None
+        if match:
+            # URI 디코딩하여 passport key 추출
+            passport_key = unquote(match.group(1))
+            print(f"✅ passport key 발급 성공: {passport_key[:20]}...")
+        else:
+            print("⚠️  passport key를 찾지 못했습니다.")
+            # 다른 패턴도 시도
+            alternative_patterns = [
+                r'passportKey["\']?\s*[:=]\s*["\']([^"\']+)["\']',
+                r'passportKey=([^&\s"\']+)',
+            ]
+            
+            for pattern in alternative_patterns:
+                alt_match = re.search(pattern, response_data, re.IGNORECASE)
+                if alt_match:
+                    passport_key = alt_match.group(1)
+                    print(f"✅ passport key 발급 성공 (대체 패턴): {passport_key[:20]}...")
+                    break
+        
+        # passport key를 찾지 못한 경우, 빈 문자열 사용
+        if not passport_key:
+            passport_key = ''
+            print("⚠️  passport key를 찾지 못해 빈 문자열을 반환합니다.")
+        
+        # 캐시에 저장
+        _passport_key_cache = passport_key
+        
+        return jsonify({
+            'passportKey': passport_key
+        })
+        
+    except Exception as e:
+        print(f"⚠️  passport key 발급 실패: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            'error': str(e)
+        }), 500
+
 @app.route('/api/spell-check', methods=['POST'])
 def spell_check_api():
     """
@@ -97,7 +176,9 @@ def spell_check_api():
                 WRONG_SPACING = 2
                 AMBIGUOUS = 3
                 STATISTICAL_CORRECTION = 4
-            base_url = 'https://m.search.naver.com/p/csearch/ocontent/util/SpellerProxy'
+            # 네이버 검색 페이지의 맞춤법 검사기 엔드포인트 사용
+            # 네이버 검색 페이지에서 직접 사용하는 맞춤법 검사기 API
+            base_url = 'https://search.naver.com/p/csearch/ocontent/util/SpellerProxy'
         
         if len(text) > 500:
             return jsonify({
@@ -105,11 +186,41 @@ def spell_check_api():
                 'error': '텍스트는 500자 이하여야 합니다.'
             }), 400
         
+        # passport key 가져오기 (캐시에서 또는 새로 발급)
+        global _passport_key_cache
+        passport_key = _passport_key_cache
+        
+        if not passport_key:
+            # passport key 발급 요청
+            try:
+                passport_response = requests.get('http://localhost:5001/passportKey', timeout=5)
+                if passport_response.status_code == 200:
+                    passport_data = passport_response.json()
+                    passport_key = passport_data.get('passportKey', '')
+                    _passport_key_cache = passport_key
+                    print(f"✅ passport key 발급 성공")
+                else:
+                    print(f"⚠️  passport key 발급 실패: HTTP {passport_response.status_code}")
+                    passport_key = ''
+            except Exception as e:
+                print(f"⚠️  passport key 발급 실패: {e}")
+                passport_key = ''
+        
+        # 네이버 맞춤법 검사기 API 호출 (passport key 포함)
+        # 제공된 코드 형식에 맞춰 파라미터 설정
+        import time as time_module
+        timestamp = int(time_module.time() * 1000)  # 밀리초 타임스탬프
+        
         payload = {
+            'passportKey': passport_key,
+            '_callback': 'mycallback',
+            'q': text,
+            'where': 'nexearch',
             'color_blindness': '0',
-            'q': text
+            '_': str(timestamp)
         }
         
+        # 네이버 검색 페이지를 시뮬레이션하는 헤더 설정
         headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'referer': 'https://search.naver.com/',
@@ -117,23 +228,75 @@ def spell_check_api():
             'accept-language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
         }
         
-        url = base_url
+        url = 'https://m.search.naver.com/p/csearch/ocontent/util/SpellerProxy'
         start_time = time.time()
+        
+        # 세션을 사용하여 쿠키 유지
         session = requests.Session()
+        
+        # 맞춤법 검사 API 호출 (JSONP 형식)
         r = session.get(url, params=payload, headers=headers, timeout=10)
         passed_time = time.time() - start_time
         
         if r.status_code != 200:
             raise Exception(f"네이버 API 호출 실패: HTTP {r.status_code}")
         
-        data = json.loads(r.text)
+        # JSONP 응답 파싱 (mycallback({...}) 형식)
+        response_text = r.text
+        if response_text.startswith('mycallback(') and response_text.endswith(');'):
+            # JSONP 형식 제거
+            json_data = response_text.replace('mycallback(', '').replace(');', '')
+            data = json.loads(json_data)
+        else:
+            # 일반 JSON 응답
+            data = json.loads(response_text)
         
         # API 오류 응답 확인
         if 'message' in data and 'error' in data.get('message', {}):
             error_msg = data['message']['error']
             print(f"⚠️  네이버 API 오류: {error_msg}")
-            print(f"   응답 전체: {json.dumps(data, ensure_ascii=False)}")
-            raise Exception(f"네이버 API 오류: {error_msg}")
+            
+            # "유효한 키가 아닙니다" 오류인 경우, passport key 재발급 후 재시도
+            if '유효한 키' in error_msg:
+                print("   passport key 재발급 중...")
+                # 캐시 초기화
+                _passport_key_cache = None
+                
+                # passport key 재발급
+                try:
+                    passport_response = requests.get('http://localhost:5001/passportKey', timeout=5)
+                    if passport_response.status_code == 200:
+                        passport_data = passport_response.json()
+                        passport_key = passport_data.get('passportKey', '')
+                        _passport_key_cache = passport_key
+                        
+                        # 새로운 passport key로 재시도
+                        payload['passportKey'] = passport_key
+                        timestamp = int(time_module.time() * 1000)
+                        payload['_'] = str(timestamp)
+                        
+                        r = session.get(url, params=payload, headers=headers, timeout=10)
+                        if r.status_code != 200:
+                            raise Exception(f"네이버 API 호출 실패: HTTP {r.status_code}")
+                        
+                        # JSONP 응답 파싱
+                        response_text = r.text
+                        if response_text.startswith('mycallback(') and response_text.endswith(');'):
+                            json_data = response_text.replace('mycallback(', '').replace(');', '')
+                            data = json.loads(json_data)
+                        else:
+                            data = json.loads(response_text)
+                        
+                        # 재시도 후에도 오류가 있으면 예외 발생
+                        if 'message' in data and 'error' in data.get('message', {}):
+                            raise Exception(f"네이버 API 오류: {data['message']['error']}")
+                    else:
+                        raise Exception(f"passport key 재발급 실패: HTTP {passport_response.status_code}")
+                except Exception as e:
+                    print(f"⚠️  passport key 재발급 실패: {e}")
+                    raise Exception(f"네이버 API 오류: {error_msg}")
+            else:
+                raise Exception(f"네이버 API 오류: {error_msg}")
         
         if 'message' not in data or 'result' not in data.get('message', {}):
             print(f"⚠️  예상치 못한 API 응답 구조: {json.dumps(data, ensure_ascii=False)}")

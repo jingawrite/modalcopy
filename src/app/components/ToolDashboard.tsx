@@ -107,19 +107,25 @@ const tools: Tool[] = [
     category: "문서 & 협업",
   },
   
-  // 마케팅 & 영업
-  {
-    name: "Featpaper",
-    description: "PDF 웹 공유 및 열람 분석",
-    url: "https://featpaper.io",
-    category: "마케팅 & 영업",
-  },
-  
   // 사용자 리서치
   {
     name: "Tally",
     description: "무료 온라인 폼 빌더",
     url: "https://tally.so",
+    category: "사용자 리서치",
+    favorite: true,
+  },
+  {
+    name: "Typeform",
+    description: "인터랙티브 설문 및 폼 작성",
+    url: "https://www.typeform.com",
+    category: "사용자 리서치",
+    favorite: true,
+  },
+  {
+    name: "Google Forms",
+    description: "온라인 설문 및 폼 작성 도구",
+    url: "https://www.google.com/forms/about/",
     category: "사용자 리서치",
   },
   {
@@ -141,16 +147,18 @@ const tools: Tool[] = [
     category: "사용자 리서치",
   },
   {
-    name: "Typeform",
-    description: "인터랙티브 설문 및 폼 작성",
-    url: "https://www.typeform.com",
-    category: "사용자 리서치",
-  },
-  {
     name: "SurveyMonkey",
     description: "온라인 설문조사 플랫폼",
     url: "https://www.surveymonkey.com",
     category: "사용자 리서치",
+  },
+  
+  // 마케팅 & 영업
+  {
+    name: "Featpaper",
+    description: "PDF 웹 공유 및 열람 분석",
+    url: "https://featpaper.io",
+    category: "마케팅 & 영업",
   },
   
   // 분석 & 데이터
@@ -207,10 +215,10 @@ const categories = [
   "프로젝트 관리",
   "디자인 & 프로토타이핑",
   "문서 & 협업",
-  "마케팅 & 영업",
   "사용자 리서치",
   "분석 & 데이터",
   "개발 협업",
+  "마케팅 & 영업",
 ];
 
 // 기획약국 페이지에서 홈으로 돌아가기 버튼 추가
