@@ -1,10 +1,10 @@
 import { Button } from "./ui/button";
-import { Sparkles, Hash } from "lucide-react";
+import { Sparkles, Hash, Compass, FileText } from "lucide-react";
 import { cn } from "./ui/utils";
 
 interface HeaderProps {
-  currentPage?: "home" | "tools" | "symbols";
-  onNavigate?: (page: "home" | "tools" | "symbols") => void;
+  currentPage?: "home" | "tools" | "symbols" | "planning-compass" | "design-description";
+  onNavigate?: (page: "home" | "tools" | "symbols" | "planning-compass" | "design-description") => void;
 }
 
 export function Header({ currentPage = "home", onNavigate }: HeaderProps) {
@@ -41,6 +41,30 @@ export function Header({ currentPage = "home", onNavigate }: HeaderProps) {
           >
             <Sparkles className="size-4" />
             기획약국
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onNavigate?.("planning-compass")}
+            className={cn(
+              "flex items-center gap-2",
+              currentPage === "planning-compass" && "bg-muted"
+            )}
+          >
+            <Compass className="size-4" />
+            기획나침반
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onNavigate?.("design-description")}
+            className={cn(
+              "flex items-center gap-2",
+              currentPage === "design-description" && "bg-muted"
+            )}
+          >
+            <FileText className="size-4" />
+            설계서 작성기
           </Button>
         </div>
         <p className="text-sm text-muted-foreground">Made with ♥ for tired PMs</p>

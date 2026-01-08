@@ -6,6 +6,8 @@ import { Footer } from "./components/Footer";
 import { SpellChecker } from "./components/SpellChecker";
 import { ToolDashboard } from "./components/ToolDashboard";
 import { SymbolPalette } from "./components/SymbolPalette";
+import { PlanningCompass } from "./components/PlanningCompass";
+import { DesignDescriptionGenerator } from "./components/DesignDescriptionGenerator";
 import { Button } from "./components/ui/button";
 import { cn } from "./components/ui/utils";
 
@@ -680,7 +682,7 @@ function generateCopy(
 }
 
 // URL 경로에서 페이지 타입 추출
-function getPageFromPath(): "home" | "tools" | "symbols" {
+function getPageFromPath(): "home" | "tools" | "symbols" | "planning-compass" | "design-description" {
   const path = window.location.pathname;
   const search = window.location.search;
   
@@ -689,11 +691,15 @@ function getPageFromPath(): "home" | "tools" | "symbols" {
     const redirectPath = search.slice(2).split("&")[0].split("~and~")[0];
     if (redirectPath.includes("tools")) return "tools";
     if (redirectPath.includes("symbols")) return "symbols";
+    if (redirectPath.includes("planning-compass")) return "planning-compass";
+    if (redirectPath.includes("design-description")) return "design-description";
   }
   
   // 일반 경로 처리
   if (path.endsWith("/tools") || path.includes("/tools/")) return "tools";
   if (path.endsWith("/symbols") || path.includes("/symbols/")) return "symbols";
+  if (path.endsWith("/planning-compass") || path.includes("/planning-compass/")) return "planning-compass";
+  if (path.endsWith("/design-description") || path.includes("/design-description/")) return "design-description";
   return "home";
 }
 
@@ -708,7 +714,7 @@ function sendPageView(page: string) {
 }
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<"home" | "tools" | "symbols">(() => getPageFromPath());
+  const [currentPage, setCurrentPage] = useState<"home" | "tools" | "symbols" | "planning-compass" | "design-description">(() => getPageFromPath());
   const [modalType, setModalType] = useState<ModalType>("성공");
   const [situation, setSituation] = useState<string>("");
   const [customModalType, setCustomModalType] =
@@ -741,7 +747,7 @@ export default function App() {
   }, [currentPage]);
 
   // 페이지 변경 시 URL 업데이트 및 페이지뷰 전송
-  const handlePageChange = (page: "home" | "tools" | "symbols") => {
+  const handlePageChange = (page: "home" | "tools" | "symbols" | "planning-compass" | "design-description") => {
     setCurrentPage(page);
     
     // 현재 base path 가져오기 (GitHub Pages: /modalcopy/, 로컬: /)
@@ -749,6 +755,8 @@ export default function App() {
     let path = base;
     if (page === "tools") path = `${base}tools`;
     else if (page === "symbols") path = `${base}symbols`;
+    else if (page === "planning-compass") path = `${base}planning-compass`;
+    else if (page === "design-description") path = `${base}design-description`;
     
     // trailing slash 제거 (홈의 경우만 유지)
     if (path !== base && path.endsWith("/")) {
@@ -826,6 +834,28 @@ export default function App() {
           onNavigateHome={() => handlePageChange("home")}
           onNavigateToSymbols={() => handlePageChange("symbols")}
         />
+        <Footer />
+      </div>
+    );
+  }
+
+  // 기획나침반 페이지 렌더링
+  if (currentPage === "planning-compass") {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header currentPage={currentPage} onNavigate={handlePageChange} />
+        <PlanningCompass />
+        <Footer />
+      </div>
+    );
+  }
+
+  // 설계서 작성기 페이지 렌더링
+  if (currentPage === "design-description") {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header currentPage={currentPage} onNavigate={handlePageChange} />
+        <DesignDescriptionGenerator />
         <Footer />
       </div>
     );
