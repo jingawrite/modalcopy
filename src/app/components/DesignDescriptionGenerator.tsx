@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Textarea } from "./ui/textarea";
@@ -37,6 +37,13 @@ interface ChecklistItem {
 }
 
 const commonChecklist: ChecklistItem[] = [
+  {
+    id: "definition",
+    category: "정의",
+    label: "정의",
+    description: "페이지, 요소, 기능에 대한 명확한 정의를 작성하세요",
+    tip: "명칭과 대상의 정의를 적어주면 자의적으로 해석하는 상황을 방지할 수 있습니다. 특히 용어의 경우 용어 가이드를 별도로 만들어 공통 용어를 사용하세요."
+  },
   {
     id: "data-exists",
     category: "데이터",
@@ -435,23 +442,91 @@ const screenTemplates: Record<ScreenType, DescriptionTemplate> = {
 export function DesignDescriptionGenerator() {
   const [selectedScreenType, setSelectedScreenType] = useState<ScreenType>("대시보드");
   const [customDefinition, setCustomDefinition] = useState("");
+  const [pageDefinition, setPageDefinition] = useState("");
   const [itemRelevance, setItemRelevance] = useState<Map<string, "yes" | "no" | null>>(new Map());
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
+  const [descriptionText, setDescriptionText] = useState<Map<string, string>>(new Map());
   const [result, setResult] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
+
+
+  const handleDescriptionChange = (id: string, value: string) => {
+    const newDescriptions = new Map(descriptionText);
+    newDescriptions.set(id, value);
+    setDescriptionText(newDescriptions);
+    generateCombinedDescription();
+  };
+
+  const generateCombinedDescription = () => {
+    let combined = "";
+    
+    // 페이지 전체 정의가 있으면 맨 위에 추가
+    if (pageDefinition.trim()) {
+      combined += `# 페이지 정의\n${pageDefinition.trim()}\n\n`;
+    }
+    
+    let itemNumber = 1;
+
+    ["정의", "데이터", "상태", "제약사항", "예외처리"].forEach((category) => {
+      const categoryItems = commonChecklist.filter(item => item.category === category);
+      const relevantItems = categoryItems.filter(item => {
+        const relevance = itemRelevance.get(item.id);
+        const requiresQuestion = item.requiresQuestion || false;
+        return !requiresQuestion || relevance === "yes";
+      });
+
+      if (relevantItems.length === 0) return;
+
+      relevantItems.forEach((item) => {
+        const description = descriptionText.get(item.id) || "";
+
+        // 설명이 있으면 항목 추가
+        if (description) {
+          combined += `${itemNumber}. ${item.label}\n`;
+          
+          // 설명을 줄바꿈으로 분리하여 각 줄 처리
+          const lines = description.split('\n').filter(line => line.trim());
+          lines.forEach((line) => {
+            const trimmedLine = line.trim();
+            
+            // 이미 들여쓰기나 번호가 있는 경우 (ㄴ, 숫자. 등)
+            if (trimmedLine.match(/^[ㄴ①②③④⑤⑥⑦⑧⑨⑩]/) || trimmedLine.match(/^\d+\.\d+/)) {
+              combined += `  ${trimmedLine}\n`;
+            } 
+            // 일반 항목은 - 로 시작
+            else {
+              combined += `  - ${trimmedLine}\n`;
+            }
+          });
+          
+          combined += `\n`;
+          itemNumber++;
+        }
+      });
+    });
+
+    setResult(combined.trim());
+  };
 
   const handleRelevanceChange = (id: string, value: "yes" | "no") => {
     const newRelevance = new Map(itemRelevance);
     newRelevance.set(id, value);
     setItemRelevance(newRelevance);
 
-    // "아니오" 선택 시 체크박스 해제
+    // "아니오" 선택 시 체크박스 해제 및 입력 내용 초기화
     if (value === "no") {
       const newChecked = new Set(checkedItems);
       newChecked.delete(id);
       setCheckedItems(newChecked);
+      
+      const newDescriptions = new Map(descriptionText);
+      newDescriptions.delete(id);
+      setDescriptionText(newDescriptions);
     }
+    
+    // 변경 후 통합 설명 업데이트
+    setTimeout(() => generateCombinedDescription(), 0);
   };
 
   const handleCheckboxChange = (id: string, checked: boolean) => {
@@ -492,39 +567,11 @@ export function DesignDescriptionGenerator() {
     setIsLoading(true);
     
     // Simulate API delay for realistic UX
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
-    const template = screenTemplates[selectedScreenType];
-    const definition = selectedScreenType === "기타" && customDefinition 
-      ? customDefinition 
-      : template.정의;
-
-    let description = `## 정의\n${definition}\n\n`;
+    // 통합된 설명 생성 (이미 실시간으로 업데이트되고 있지만 버튼 클릭 시 스크롤)
+    generateCombinedDescription();
     
-    description += `## 제약사항\n`;
-    template.제약사항.forEach((item, idx) => {
-      description += `${idx + 1}. ${item}\n`;
-    });
-    description += `\n`;
-
-    description += `## 데이터\n`;
-    template.데이터.forEach((item, idx) => {
-      description += `${idx + 1}. ${item}\n`;
-    });
-    description += `\n`;
-
-    description += `## 상태\n`;
-    template.상태.forEach((item, idx) => {
-      description += `${idx + 1}. ${item}\n`;
-    });
-    description += `\n`;
-
-    description += `## 예외처리\n`;
-    template.예외처리.forEach((item, idx) => {
-      description += `${idx + 1}. ${item}\n`;
-    });
-
-    setResult(description);
     setIsLoading(false);
 
     // Scroll to results
@@ -532,6 +579,12 @@ export function DesignDescriptionGenerator() {
       resultRef.current?.scrollIntoView({ behavior: "smooth" });
     }, 100);
   };
+
+  // 컴포넌트 마운트 시 및 관련 상태 변경 시 통합 설명 생성
+  useEffect(() => {
+    generateCombinedDescription();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageDefinition, descriptionText, itemRelevance]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(result);
@@ -548,7 +601,7 @@ export function DesignDescriptionGenerator() {
           </p>
         </div>
 
-        {/* 체크리스트 */}
+        {/* 체크리스트 및 입력 필드 */}
         <Card className="mb-6">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -567,96 +620,125 @@ export function DesignDescriptionGenerator() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {["데이터", "상태", "제약사항", "예외처리"].map((category) => {
-                const categoryItems = commonChecklist.filter(item => item.category === category);
-                if (categoryItems.length === 0) return null;
-                
-                return (
-                  <div key={category} className="border rounded-lg p-4">
-                    <h3 className="font-semibold mb-3 text-sm text-foreground">{category}</h3>
-                    <div className="space-y-3">
-                      {categoryItems.map((item) => {
-                        const relevance = itemRelevance.get(item.id);
-                        const isRelevant = relevance === "yes";
-                        const isNotRelevant = relevance === "no";
-                        const requiresQuestion = item.requiresQuestion || false;
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* 왼쪽: 입력 필드 (sticky) */}
+              <div className="lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
+                <div className="space-y-4">
+                  {["정의", "데이터", "상태", "제약사항", "예외처리"].map((category, categoryIndex) => {
+                    const categoryItems = commonChecklist.filter(item => item.category === category);
+                    if (categoryItems.length === 0) return null;
+                    
+                    return (
+                      <div key={category} className="space-y-3">
+                        <h3 className="font-semibold text-sm text-foreground sticky top-0 bg-background py-2 z-10">
+                          {category}
+                        </h3>
                         
-                        // 질문이 필요 없는 항목은 바로 체크박스 표시
-                        if (!requiresQuestion) {
-                          return (
-                            <div key={item.id} className="flex items-start gap-3 border rounded-lg p-3">
-                              <Checkbox
-                                id={item.id}
-                                checked={checkedItems.has(item.id)}
-                                onCheckedChange={(checked) => {
-                                  const newChecked = new Set(checkedItems);
-                                  if (checked) {
-                                    newChecked.add(item.id);
-                                  } else {
-                                    newChecked.delete(item.id);
-                                  }
-                                  setCheckedItems(newChecked);
-                                }}
-                                className="mt-0.5"
+                        {/* 페이지 정의 입력 필드를 '데이터' 카테고리 위에 추가 */}
+                        {category === "데이터" && (
+                          <div className="border rounded-lg p-3 bg-background space-y-2 mb-3">
+                            <div>
+                              <label className="text-xs font-medium text-foreground block mb-1">
+                                페이지 정의
+                              </label>
+                              <Textarea
+                                value={pageDefinition}
+                                onChange={(e) => setPageDefinition(e.target.value)}
+                                placeholder="예: 관리자가 사용자 권한을 설정하고 관리하는 페이지입니다. 역할 기반 접근 제어(RBAC)를 통해 기능별 권한을 부여하며, 사용자별 권한 범위를 설정할 수 있습니다."
+                                className="min-h-[100px] text-sm"
                               />
-                              <div className="flex-1">
-                                <label
-                                  htmlFor={item.id}
-                                  className="text-sm font-medium cursor-pointer leading-tight block"
-                                >
+                              <p className="text-xs text-muted-foreground mt-1">
+                                이 페이지의 용도나 목적을 작성해주세요. 페이지 전반에 대한 설명을 입력하면 코워커들이 페이지의 요소들을 이해하기 좋습니다.
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        {categoryItems.map((item) => {
+                          const relevance = itemRelevance.get(item.id);
+                          const isRelevant = relevance === "yes";
+                          const requiresQuestion = item.requiresQuestion || false;
+                          
+                          // 질문이 필요 없거나 "예"로 선택된 항목만 입력 필드 표시
+                          if (requiresQuestion && relevance !== "yes") {
+                            return null;
+                          }
+                          
+                          // 각 항목별로 다른 예시 제공
+                          const getPlaceholder = (itemId: string) => {
+                            const examples: Record<string, string> = {
+                              "definition": "예시:\n- 이 페이지는 관리자가 사용자 권한을 설정하고 관리하는 페이지입니다.\n- '권한 관리'는 역할 기반 접근 제어(RBAC)를 통해 기능별 권한을 부여합니다.",
+                              "data-exists": "예시:\n- 캠페인 목록이 그리드 형태로 표시됩니다.\n- 각 카드에는 캠페인명, 상태, 예산, 성과 지표가 표시됩니다.\n- 정렬 옵션: 인기순, 가격순, 최신순",
+                              "data-length": "예시:\n- 캠페인명: 최대 100자, 말줄임 처리\n- 설명: 최대 500자, 여러 줄 표시 가능\n- 이미지: 최소 300x300px, 최대 1920x1080px",
+                              "data-type": "예시:\n- 이미지: JPG, PNG, GIF 형식 지원\n- 동영상: MP4, MOV 형식, 최대 30초\n- 문서: PDF, DOCX 형식, 최대 10MB",
+                              "data-size": "예시:\n- 이미지 파일: 최대 5MB\n- 동영상 파일: 최대 50MB\n- 문서 파일: 최대 10MB",
+                              "data-image-empty": "예시:\n- 이미지가 없을 경우 기본 플레이스홀더 이미지 표시\n- 로드 실패 시 회색 배경에 이미지 아이콘 표시\n- 클릭 시 이미지 업로드 모달 열기",
+                              "data-empty": "예시:\n- '등록된 캠페인이 없습니다' 메시지와 함께 빈 상태 이미지 표시\n- '새 캠페인 만들기' 버튼 제공\n- 안내 문구: '첫 번째 캠페인을 만들어보세요'",
+                              "data-many": "예시:\n- 페이지당 20개씩 표시, 하단에 페이지네이션 제공\n- 무한 스크롤 옵션: 스크롤 시 자동으로 다음 페이지 로드\n- 로딩 중: 스켈레톤 UI 표시",
+                              "state-loading": "예시:\n- 데이터 로딩 중: 스켈레톤 UI 표시\n- 버튼 클릭 시: 로딩 스피너와 함께 버튼 비활성화\n- API 호출 중: 전체 화면 로딩 오버레이 표시",
+                              "state-error": "예시:\n- 네트워크 오류: '데이터를 불러올 수 없습니다' 메시지와 재시도 버튼\n- 서버 오류: '일시적인 오류가 발생했습니다' 알림 표시\n- 권한 오류: '접근 권한이 없습니다' 메시지 표시",
+                              "constraint-input": "예시:\n- 아이디: 영문 소문자, 숫자, 특수문자(-, _, .) 조합, 6-20자\n- 비밀번호: 영문 대소문자, 숫자, 특수문자 조합, 8-20자\n- 이메일: 이메일 형식 검증 필수",
+                              "constraint-permission": "예시:\n- 관리자: 모든 기능 접근 가능\n- 운영자: 캠페인 생성/수정 가능, 삭제 불가\n- 뷰어: 조회만 가능, 생성/수정/삭제 불가",
+                              "exception-network": "예시:\n- 네트워크 연결 실패 시: '네트워크 연결을 확인해주세요' 메시지 표시\n- 재시도 버튼 제공, 3초 후 자동 재시도\n- 오프라인 상태 감지 시 오프라인 배지 표시",
+                              "exception-server": "예시:\n- 서버 오류 발생 시: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요' 메시지 표시\n- 에러 코드별 상세 메시지 제공\n- 고객센터 문의 링크 제공",
+                              "exception-validation": "예시:\n- 입력값 검증 실패 시: 해당 필드에 빨간색 테두리와 에러 메시지 표시\n- '아이디는 6자 이상 입력해주세요' 형식의 구체적 안내\n- 실시간 유효성 검사 결과 표시"
+                            };
+                            return examples[itemId] || `${item.description}${item.tip ? `\n💡 ${item.tip}` : ""}`;
+                          };
+                          
+                          return (
+                            <div key={item.id} className="border rounded-lg p-3 bg-background">
+                              <div>
+                                <label className="text-xs font-medium text-foreground block mb-1">
                                   {item.label}
                                 </label>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  {item.description}
-                                </p>
-                                {item.tip && (
-                                  <p className="text-xs text-blue-600 mt-1 font-medium">
-                                    💡 {item.tip}
-                                  </p>
-                                )}
+                                <Textarea
+                                  value={descriptionText.get(item.id) || ""}
+                                  onChange={(e) => handleDescriptionChange(item.id, e.target.value)}
+                                  placeholder={getPlaceholder(item.id)}
+                                  className="min-h-[120px] text-sm"
+                                />
                               </div>
                             </div>
                           );
-                        }
-                        
-                        // 질문이 필요한 항목은 질문 후 체크박스 표시
-                        return (
-                          <div key={item.id} className="border rounded-lg p-4 bg-muted/30">
-                            <div className="mb-3">
-                              <p className="text-sm font-medium mb-2">
-                                {item.question || `이 페이지에 ${item.label}이(가) 필요한가요?`}
-                              </p>
-                              <div className="flex gap-4">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input
-                                    type="radio"
-                                    name={`relevance-${item.id}`}
-                                    checked={relevance === "yes"}
-                                    onChange={() => handleRelevanceChange(item.id, "yes")}
-                                    className="w-4 h-4"
-                                  />
-                                  <span className="text-sm">예</span>
-                                </label>
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input
-                                    type="radio"
-                                    name={`relevance-${item.id}`}
-                                    checked={relevance === "no"}
-                                    onChange={() => handleRelevanceChange(item.id, "no")}
-                                    className="w-4 h-4"
-                                  />
-                                  <span className="text-sm">아니오</span>
-                                </label>
-                              </div>
-                            </div>
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
 
-                            {isRelevant && (
-                              <div className="flex items-start gap-3 pt-3 border-t">
+              {/* 오른쪽: 체크리스트 */}
+              <div className="space-y-4">
+                {["정의", "데이터", "상태", "제약사항", "예외처리"].map((category) => {
+                  const categoryItems = commonChecklist.filter(item => item.category === category);
+                  if (categoryItems.length === 0) return null;
+                  
+                  return (
+                    <div key={category} className="border rounded-lg p-4">
+                      <h3 className="font-semibold mb-3 text-sm text-foreground">{category}</h3>
+                      <div className="space-y-3">
+                        {categoryItems.map((item) => {
+                          const relevance = itemRelevance.get(item.id);
+                          const isRelevant = relevance === "yes";
+                          const isNotRelevant = relevance === "no";
+                          const requiresQuestion = item.requiresQuestion || false;
+                          
+                          // 질문이 필요 없는 항목은 바로 체크박스 표시
+                          if (!requiresQuestion) {
+                            return (
+                              <div key={item.id} className="flex items-start gap-3 border rounded-lg p-3">
                                 <Checkbox
                                   id={item.id}
                                   checked={checkedItems.has(item.id)}
-                                  onCheckedChange={(checked) => handleCheckboxChange(item.id, checked as boolean)}
+                                  onCheckedChange={(checked) => {
+                                    const newChecked = new Set(checkedItems);
+                                    if (checked) {
+                                      newChecked.add(item.id);
+                                    } else {
+                                      newChecked.delete(item.id);
+                                    }
+                                    setCheckedItems(newChecked);
+                                  }}
                                   className="mt-0.5"
                                 />
                                 <div className="flex-1">
@@ -664,7 +746,7 @@ export function DesignDescriptionGenerator() {
                                     htmlFor={item.id}
                                     className="text-sm font-medium cursor-pointer leading-tight block"
                                   >
-                                    {item.label} 작성 완료 체크
+                                    {item.label}
                                   </label>
                                   <p className="text-xs text-muted-foreground mt-1">
                                     {item.description}
@@ -672,26 +754,120 @@ export function DesignDescriptionGenerator() {
                                   {item.tip && (
                                     <p className="text-xs text-blue-600 mt-1 font-medium">
                                       💡 {item.tip}
-                                  </p>
+                                    </p>
                                   )}
                                 </div>
                               </div>
-                            )}
-
-                            {isNotRelevant && (
-                              <div className="pt-3 border-t">
-                                <p className="text-xs text-muted-foreground italic">
-                                  이 항목은 이 페이지에 해당하지 않으므로 작성하지 않아도 됩니다.
+                            );
+                          }
+                          
+                          // 질문이 필요한 항목은 질문 후 체크박스 표시
+                          return (
+                            <div key={item.id} className="border rounded-lg p-4 bg-muted/30">
+                              <div className="mb-3">
+                                <p className="text-sm font-medium mb-2">
+                                  {item.question || `이 페이지에 ${item.label}이(가) 필요한가요?`}
                                 </p>
+                                <div className="flex gap-4">
+                                  <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                      type="radio"
+                                      name={`relevance-${item.id}`}
+                                      checked={relevance === "yes"}
+                                      onChange={() => handleRelevanceChange(item.id, "yes")}
+                                      className="w-4 h-4"
+                                    />
+                                    <span className="text-sm">예</span>
+                                  </label>
+                                  <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                      type="radio"
+                                      name={`relevance-${item.id}`}
+                                      checked={relevance === "no"}
+                                      onChange={() => handleRelevanceChange(item.id, "no")}
+                                      className="w-4 h-4"
+                                    />
+                                    <span className="text-sm">아니오</span>
+                                  </label>
+                                </div>
                               </div>
-                            )}
-                          </div>
-                        );
-                      })}
+
+                              {isRelevant && (
+                                <div className="flex items-start gap-3 pt-3 border-t">
+                                  <Checkbox
+                                    id={item.id}
+                                    checked={checkedItems.has(item.id)}
+                                    onCheckedChange={(checked) => handleCheckboxChange(item.id, checked as boolean)}
+                                    className="mt-0.5"
+                                  />
+                                  <div className="flex-1">
+                                    <label
+                                      htmlFor={item.id}
+                                      className="text-sm font-medium cursor-pointer leading-tight block"
+                                    >
+                                      {item.label} 작성 완료 체크
+                                    </label>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                      {item.description}
+                                    </p>
+                                    {item.tip && (
+                                      <p className="text-xs text-blue-600 mt-1 font-medium">
+                                        💡 {item.tip}
+                                  </p>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              {isNotRelevant && (
+                                <div className="pt-3 border-t">
+                                  <p className="text-xs text-muted-foreground italic">
+                                    이 항목은 이 페이지에 해당하지 않으므로 작성하지 않아도 됩니다.
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 통합 디스크립션 */}
+        <Card ref={resultRef} id="result" className={result ? "" : "opacity-50 mb-6"}>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>통합 디스크립션</CardTitle>
+                <CardDescription>
+                  {result 
+                    ? "입력한 내용이 자동으로 통합됩니다. 아래 내용을 복사하여 설계서에 사용하세요"
+                    : "왼쪽 입력 필드에 내용을 입력하면 자동으로 통합되어 표시됩니다"}
+                </CardDescription>
+              </div>
+              {result && (
+                <Button onClick={handleCopy} variant="outline" size="sm">
+                  전체 복사
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-muted p-4 rounded-lg min-h-[200px]">
+              {result ? (
+                <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
+                  {result}
+                </pre>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  입력 필드에 내용을 작성하면 여기에 통합된 디스크립션이 표시됩니다.
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -745,40 +921,14 @@ export function DesignDescriptionGenerator() {
 
             <Button
               onClick={handleGenerate}
-              disabled={isLoading}
+              disabled={isLoading || !result}
               size="lg"
               className="w-full mt-4"
             >
-              {isLoading ? "생성 중..." : "디스크립션 생성하기"}
+              {isLoading ? "처리 중..." : result ? "결과로 이동" : "내용을 입력해주세요"}
             </Button>
           </CardContent>
         </Card>
-
-        {/* 결과 표시 */}
-        {result && (
-          <Card ref={resultRef} id="result">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>생성된 디스크립션</CardTitle>
-                  <CardDescription>
-                    아래 내용을 복사하여 설계서에 사용하세요
-                  </CardDescription>
-                </div>
-                <Button onClick={handleCopy} variant="outline" size="sm">
-                  전체 복사
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-muted p-4 rounded-lg">
-                <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
-                  {result}
-                </pre>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
     </div>
   );
