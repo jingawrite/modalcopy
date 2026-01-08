@@ -574,6 +574,8 @@ def _extract_errors_from_html(original: str, checked: str, html: str, error_coun
     matches = list(re.finditer(pattern, html))
     
     print(f"   HTML에서 찾은 오류 태그 개수: {len(matches)}")
+    print(f"   원본 텍스트: {original}")
+    print(f"   교정된 텍스트: {checked}")
     
     for match in matches:
         error_class = match.group(1)  # red_text, green_text 등
@@ -603,32 +605,60 @@ def _extract_errors_from_html(original: str, checked: str, html: str, error_coun
         # 교정된 텍스트의 각 단어가 원본에 있는지 확인
         # 원본에 없는 단어 또는 원본과 다른 단어를 찾기
         actual_corrected_word = None
-        for cw in corrected_words:
-            # 원본에서 해당 단어 찾기
-            found_in_original = False
-            for ow in original_words_list:
-                if ow == cw:
-                    found_in_original = True
-                    break
-            if not found_in_original:
-                # 원본에 없는 단어 = 교정된 단어
-                actual_corrected_word = cw
-                break
         
-        # 원본에 없는 단어를 찾지 못한 경우, 교정된 텍스트의 마지막 단어 사용
-        if not actual_corrected_word and corrected_words:
-            actual_corrected_word = corrected_words[-1]
+        # 먼저 교정된 텍스트 전체가 원본에 있는지 확인
+        if corrected_text not in original:
+            # 교정된 텍스트 전체가 원본에 없으면, 각 단어를 확인
+            for cw in corrected_words:
+                # 원본에서 해당 단어 찾기
+                found_in_original = False
+                for ow in original_words_list:
+                    if ow == cw:
+                        found_in_original = True
+                        break
+                if not found_in_original:
+                    # 원본에 없는 단어 = 교정된 단어
+                    actual_corrected_word = cw
+                    break
+            
+            # 원본에 없는 단어를 찾지 못한 경우, 교정된 텍스트 전체를 사용
+            if not actual_corrected_word:
+                actual_corrected_word = corrected_text
+        else:
+            # 교정된 텍스트가 원본에 포함된 경우, 단어 단위로 비교
+            for cw in corrected_words:
+                found_in_original = False
+                for ow in original_words_list:
+                    if ow == cw:
+                        found_in_original = True
+                        break
+                if not found_in_original:
+                    actual_corrected_word = cw
+                    break
+            
+            # 원본에 없는 단어를 찾지 못한 경우, 교정된 텍스트의 마지막 단어 사용
+            if not actual_corrected_word and corrected_words:
+                actual_corrected_word = corrected_words[-1]
         
         # 교정된 텍스트에서 위치 찾기
         if actual_corrected_word:
             corrected_pos = checked.find(actual_corrected_word)
             if corrected_pos == -1:
-                continue
-            corrected_text = actual_corrected_word
+                # 정확히 찾지 못하면 부분 일치로 찾기 시도
+                corrected_pos = checked.find(corrected_text)
+                if corrected_pos == -1:
+                    print(f"   ⚠️  교정된 텍스트를 찾을 수 없음: {actual_corrected_word}")
+                    continue
+                actual_corrected_word = corrected_text
+            else:
+                corrected_text = actual_corrected_word
+            print(f"   ✅ 교정된 단어: {corrected_text} (위치: {corrected_pos})")
         else:
             corrected_pos = checked.find(corrected_text)
             if corrected_pos == -1:
+                print(f"   ⚠️  교정된 텍스트를 찾을 수 없음: {corrected_text}")
                 continue
+            print(f"   ✅ 교정된 텍스트: {corrected_text} (위치: {corrected_pos})")
         
         # 교정된 텍스트 위치를 원본 위치로 매핑
         orig_idx = 0
@@ -751,8 +781,8 @@ def _extract_errors_from_html(original: str, checked: str, html: str, error_coun
                     if common_len > 0:
                         # 공통 부분이 있으면 유사도 계산
                         similarity = common_len / max(len(ow_word), len(corrected_text))
-                        # 공통 부분이 전체의 30% 이상이면 유사한 것으로 간주
-                        if similarity > 0.3:
+                        # 공통 부분이 전체의 20% 이상이면 유사한 것으로 간주 (기존 30%에서 낮춤)
+                        if similarity > 0.2:
                             if similarity > best_similarity or (similarity == best_similarity and distance < best_distance):
                                 best_similarity = similarity
                                 best_distance = distance
@@ -763,7 +793,8 @@ def _extract_errors_from_html(original: str, checked: str, html: str, error_coun
                         if not best_match:
                             best_match = ow
             
-            if best_match and (best_similarity > 0.3 or best_distance < 15):
+            # 유사도가 0.2 이상이거나 거리가 20 이하인 경우 매칭 (기존 0.3, 15에서 완화)
+            if best_match and (best_similarity > 0.2 or best_distance < 20):
                 found_original = {
                     'word': best_match['word'],
                     'start': best_match['start'],
