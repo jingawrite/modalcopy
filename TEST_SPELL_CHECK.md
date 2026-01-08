@@ -183,3 +183,5 @@ cd server && python3 app.py
 - 백엔드 서버가 실행 중인지 확인
 - `.env` 파일에 `VITE_SPELL_CHECK_API_URL=http://localhost:5001` 설정 확인
 
+
+
