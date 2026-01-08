@@ -22,9 +22,26 @@ interface SpellCheckerProps {
 async function checkSpelling(text: string): Promise<{ errors: SpellError[]; checked: string }> {
   try {
     // 백엔드 서버 API 호출
-    // 개발 환경: http://localhost:5001 (macOS에서는 5000이 AirPlay Receiver에 사용됨)
+    // 개발 환경: 환경 변수 또는 자동 감지
     // 프로덕션: 환경 변수로 설정
-    const apiUrl = import.meta.env.VITE_SPELL_CHECK_API_URL || "http://localhost:5001";
+    let apiUrl = import.meta.env.VITE_SPELL_CHECK_API_URL;
+    
+    if (!apiUrl) {
+      // 환경 변수가 없으면 자동 감지
+      // 개발 환경에서는 현재 호스트를 사용 (모바일 접근 가능)
+      if (import.meta.env.DEV) {
+        // 현재 호스트명과 포트 사용
+        const hostname = window.location.hostname;
+        const port = '5001';
+        apiUrl = `http://${hostname}:${port}`;
+      } else {
+        // 프로덕션 환경에서는 localhost 기본값 사용
+        apiUrl = "http://localhost:5001";
+      }
+    }
+    
+    // 디버깅: 사용되는 API URL 확인
+    console.log("맞춤법 검사 API URL:", apiUrl);
     
     const response = await fetch(`${apiUrl}/api/spell-check`, {
       method: "POST",
