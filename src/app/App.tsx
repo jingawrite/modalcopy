@@ -727,6 +727,18 @@ function sendPageView(page: string) {
   }
 }
 
+// Google Analytics 메뉴 클릭 이벤트 전송
+function sendMenuClickEvent(menuId: string, menuLabel: string) {
+  if (typeof window !== "undefined" && (window as any).gtag) {
+    (window as any).gtag("event", "menu_click", {
+      event_category: "navigation",
+      event_label: menuLabel,
+      menu_id: menuId,
+      menu_name: menuLabel,
+    });
+  }
+}
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState<"home" | "tools" | "symbols" | "planning-compass" | "design-description">(() => getPageFromPath());
   const [modalType, setModalType] = useState<ModalType>("성공");
@@ -762,6 +774,15 @@ export default function App() {
 
   // 페이지 변경 시 URL 업데이트 및 페이지뷰 전송
   const handlePageChange = (page: "home" | "tools" | "symbols" | "planning-compass" | "design-description") => {
+    // 현재 페이지와 동일하면 이벤트 전송하지 않음
+    if (currentPage === page) return;
+    
+    // 메뉴 클릭 이벤트 추적
+    const menuItem = menuItems.find(item => item.page === page);
+    if (menuItem) {
+      sendMenuClickEvent(menuItem.id, menuItem.label);
+    }
+    
     setCurrentPage(page);
     
     // 현재 base path 가져오기 (GitHub Pages: /modalcopy/, 로컬: /)
