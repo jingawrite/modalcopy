@@ -130,7 +130,6 @@ function SidebarProvider({
     <SidebarContext.Provider value={contextValue}>
       <TooltipProvider delayDuration={0}>
         <div
-          data-slot="sidebar-wrapper"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH,
@@ -139,7 +138,7 @@ function SidebarProvider({
             } as React.CSSProperties
           }
           className={cn(
-            "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full",
+            "has-data-[variant=inset]:bg-sidebar",
             className,
           )}
           {...props}
@@ -168,14 +167,42 @@ function Sidebar({
   if (collapsible === "none") {
     return (
       <div
+        className="group peer text-sidebar-foreground hidden md:block"
+        data-state="expanded"
+        data-collapsible=""
+        data-variant={variant}
+        data-side={side}
         data-slot="sidebar"
-        className={cn(
-          "bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col",
-          className,
-        )}
-        {...props}
       >
-        {children}
+        <div
+          data-slot="sidebar-gap"
+          className={cn(
+            "relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear",
+            "group-data-[side=right]:rotate-180",
+          )}
+        />
+        <div
+          data-slot="sidebar-container"
+          className={cn(
+            "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
+            side === "left" ? "left-0" : "right-0",
+            variant === "floating" || variant === "inset"
+              ? "p-2"
+              : "group-data-[side=left]:border-r group-data-[side=right]:border-l",
+            className,
+          )}
+          {...props}
+        >
+          <div
+            data-sidebar="sidebar"
+            data-slot="sidebar-inner"
+            className={cn(
+              "bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm",
+            )}
+          >
+            {children}
+          </div>
+        </div>
       </div>
     );
   }

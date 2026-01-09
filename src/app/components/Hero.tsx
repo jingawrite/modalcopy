@@ -8,7 +8,7 @@ interface HeroProps {
 
 export function Hero({ onStartClick, onNavigateToTools }: HeroProps) {
   return (
-    <section className="max-w-[800px] mx-auto px-6 py-20 text-center" aria-label="서비스 소개">
+    <section className="w-full max-w-[800px] mx-auto px-6 py-20 text-center" aria-label="서비스 소개">
       <h1 className="mb-4">모달 문구, 10초 만에 3가지 스타일 완성</h1>
       <p className="text-lg text-muted-foreground mb-6">
         상황만 말해주세요. 토스·당근·드랍박스 3가지 브랜드 톤앤매너로 바로 생성해드려요.

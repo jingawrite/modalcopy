@@ -249,13 +249,9 @@ export function PlanningCompass() {
     : planningTips;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full">
       <div className="max-w-[1600px] mx-auto px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">기획나침반</h1>
-          <p className="text-muted-foreground mb-6">
-            기획 프로세스별 꿀팁을 확인하고, 각 단계를 클릭하면 해당 단계의 꿀팁만 필터링됩니다.
-          </p>
 
           {/* 프로세스 선택 버튼 */}
           <div className="flex flex-wrap gap-2 mb-6">

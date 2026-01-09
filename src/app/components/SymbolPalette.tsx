@@ -184,31 +184,6 @@ const symbols: Symbol[] = [
     category: "별",
   },
 
-  // 주의/참고
-  {
-    symbol: "※",
-    name: "주의",
-    description: "주의사항 표시",
-    category: "주의/참고",
-  },
-  {
-    symbol: "※※",
-    name: "이중 주의",
-    description: "중요 주의사항",
-    category: "주의/참고",
-  },
-  {
-    symbol: "※※※",
-    name: "삼중 주의",
-    description: "매우 중요",
-    category: "주의/참고",
-  },
-  {
-    symbol: "※",
-    name: "참고",
-    description: "참고사항",
-    category: "주의/참고",
-  },
 
   // 원 숫자
   {
@@ -318,6 +293,12 @@ const symbols: Symbol[] = [
 
   // 문장 부호
   {
+    symbol: "※",
+    name: "주의",
+    description: "주의사항 표시",
+    category: "문장 부호",
+  },
+  {
     symbol: "·",
     name: "중점",
     description: "나열 구분",
@@ -333,18 +314,6 @@ const symbols: Symbol[] = [
     symbol: "…",
     name: "말줄임표",
     description: "생략",
-    category: "문장 부호",
-  },
-  {
-    symbol: "〜",
-    name: "물결표",
-    description: "범위/대략",
-    category: "문장 부호",
-  },
-  {
-    symbol: "〜",
-    name: "물결표 (전각)",
-    description: "범위/대략",
     category: "문장 부호",
   },
 
@@ -444,81 +413,6 @@ const symbols: Symbol[] = [
     category: "수학/비교",
   },
 
-  // 온도
-  {
-    symbol: "℃",
-    name: "섭씨",
-    description: "온도",
-    category: "온도",
-  },
-  {
-    symbol: "℉",
-    name: "화씨",
-    description: "온도",
-    category: "온도",
-  },
-
-  // 로마 숫자
-  {
-    symbol: "Ⅰ",
-    name: "로마 숫자 1",
-    description: "로마 숫자",
-    category: "로마 숫자",
-  },
-  {
-    symbol: "Ⅱ",
-    name: "로마 숫자 2",
-    description: "로마 숫자",
-    category: "로마 숫자",
-  },
-  {
-    symbol: "Ⅲ",
-    name: "로마 숫자 3",
-    description: "로마 숫자",
-    category: "로마 숫자",
-  },
-  {
-    symbol: "Ⅳ",
-    name: "로마 숫자 4",
-    description: "로마 숫자",
-    category: "로마 숫자",
-  },
-  {
-    symbol: "Ⅴ",
-    name: "로마 숫자 5",
-    description: "로마 숫자",
-    category: "로마 숫자",
-  },
-  {
-    symbol: "Ⅵ",
-    name: "로마 숫자 6",
-    description: "로마 숫자",
-    category: "로마 숫자",
-  },
-  {
-    symbol: "Ⅶ",
-    name: "로마 숫자 7",
-    description: "로마 숫자",
-    category: "로마 숫자",
-  },
-  {
-    symbol: "Ⅷ",
-    name: "로마 숫자 8",
-    description: "로마 숫자",
-    category: "로마 숫자",
-  },
-  {
-    symbol: "Ⅸ",
-    name: "로마 숫자 9",
-    description: "로마 숫자",
-    category: "로마 숫자",
-  },
-  {
-    symbol: "Ⅹ",
-    name: "로마 숫자 10",
-    description: "로마 숫자",
-    category: "로마 숫자",
-  },
 
   // 삼각형
   {
@@ -603,14 +497,11 @@ const categories = [
   "원",
   "별",
   "체크/엑스",
-  "주의/참고",
   "괄호",
   "문장 부호",
   "법률/문서",
   "상표/저작권",
   "수학/비교",
-  "온도",
-  "로마 숫자",
 ];
 
 interface SymbolPaletteProps {
@@ -644,53 +535,38 @@ export function SymbolPalette({ onNavigateToTools }: SymbolPaletteProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full">
       <div className="max-w-[1400px] mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">특수기호 모음</h1>
-          <p className="text-muted-foreground">
-            기획서와 PRD에 자주 쓰는 특수기호를 클릭하면 바로 복사됩니다
-          </p>
-        </div>
 
-        <div className="space-y-8">
+        <div className="space-y-6">
           {categories.map((category) => {
             const categorySymbols = getSymbolsByCategory(category);
             if (categorySymbols.length === 0) return null;
 
             return (
               <div key={category}>
-                <h2 className="text-xl font-semibold mb-4 text-foreground">
-                  {category}
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-16 xl:grid-cols-20 gap-0.5">
                   {categorySymbols.map((item) => {
                     const isCopied = copiedSymbol === item.symbol;
                     return (
                       <Card
                         key={`${item.symbol}-${item.name}`}
                         className={cn(
-                          "hover:shadow-md transition-all cursor-pointer group",
-                          isCopied && "border-primary shadow-md"
+                          "hover:shadow-lg hover:border-primary/50 transition-all cursor-pointer group w-10 h-10 border-border/50 relative overflow-hidden flex items-center justify-center gap-0",
+                          isCopied && "border-primary shadow-lg ring-2 ring-primary/20"
                         )}
                         onClick={() => handleCopy(item.symbol)}
                       >
-                        <CardContent className="p-4 flex flex-col items-center justify-center min-h-[100px]">
-                          <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">
+                        {isCopied && (
+                          <div className="absolute inset-0 bg-primary/20 z-10" />
+                        )}
+                        <CardContent className="!p-0 !pb-0 flex items-center justify-center h-full w-full relative m-0">
+                          <div className="text-base group-hover:scale-125 transition-transform leading-none absolute inset-0 flex items-center justify-center m-0 p-0">
                             {item.symbol}
                           </div>
-                          <div className="text-xs font-medium text-center mb-1">
-                            {item.name}
-                          </div>
-                          {item.description && (
-                            <div className="text-xs text-muted-foreground text-center">
-                              {item.description}
-                            </div>
-                          )}
                           {isCopied && (
-                            <div className="mt-2 flex items-center gap-1 text-xs text-primary">
-                              <Check className="size-3" />
-                              <span>복사됨</span>
+                            <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                              <Check className="size-5 text-primary drop-shadow-sm" />
                             </div>
                           )}
                         </CardContent>

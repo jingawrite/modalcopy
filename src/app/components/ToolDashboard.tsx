@@ -239,25 +239,8 @@ export function ToolDashboard({ onNavigateHome, onNavigateToSymbols }: ToolDashb
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full">
       <div className="max-w-[1600px] mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">기획약국</h1>
-          <p className="text-muted-foreground mb-4">
-            기획자들이 자주 사용하는 도구들을 한눈에 찾아보세요
-          </p>
-          {onNavigateToSymbols && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onNavigateToSymbols}
-              className="flex items-center gap-2"
-            >
-              <Hash className="size-4" />
-              특수기호 모음 바로가기
-            </Button>
-          )}
-        </div>
 
         {/* Trello 스타일 보드 레이아웃 - 가로 스크롤 */}
         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">

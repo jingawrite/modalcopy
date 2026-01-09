@@ -10,6 +10,20 @@ import { PlanningCompass } from "./components/PlanningCompass";
 import { DesignDescriptionGenerator } from "./components/DesignDescriptionGenerator";
 import { Button } from "./components/ui/button";
 import { cn } from "./components/ui/utils";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from "./components/ui/sidebar";
+import { Hash, Sparkles, Compass, FileText, Home } from "lucide-react";
 
 type ModalType =
   | "성공"
@@ -814,56 +828,283 @@ export default function App() {
     }, 100);
   };
 
+  // 공통 Sidebar 메뉴 구성
+  const menuItems = [
+    {
+      id: "home",
+      label: "3가지 톤으로 작성한 UI카피 보기",
+      icon: Home,
+      page: "home" as const,
+    },
+    {
+      id: "symbols",
+      label: "맥에서 특수기호 입력하기",
+      icon: Hash,
+      page: "symbols" as const,
+    },
+    {
+      id: "tools",
+      label: "기획자가 자주 사용하는 도구 보기",
+      icon: Sparkles,
+      page: "tools" as const,
+    },
+    {
+      id: "planning-compass",
+      label: "기획 프로세스별로 꿀팁 보기",
+      icon: Compass,
+      page: "planning-compass" as const,
+    },
+    {
+      id: "design-description",
+      label: "화면설계서 빠짐없이 작성하기",
+      icon: FileText,
+      page: "design-description" as const,
+    },
+  ];
+
   // 특수기호 페이지 렌더링
   if (currentPage === "symbols") {
     return (
-      <div className="min-h-screen bg-background">
-        <Header currentPage={currentPage} onNavigate={handlePageChange} />
-        <SymbolPalette onNavigateToTools={() => handlePageChange("tools")} />
-        <Footer />
-      </div>
+      <SidebarProvider>
+        <div className="flex min-h-screen bg-background">
+          <Sidebar collapsible="none">
+            <SidebarHeader>
+              <div className="flex items-center gap-2 px-2 py-2">
+                <span className="font-semibold text-lg">모달카피</span>
+              </div>
+            </SidebarHeader>
+            <SidebarContent>
+              <SidebarGroup>
+                <SidebarGroupLabel>메뉴</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {menuItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <SidebarMenuItem key={item.id}>
+                          <SidebarMenuButton
+                            onClick={() => handlePageChange(item.page)}
+                            isActive={currentPage === item.page}
+                            tooltip={item.label}
+                            size="sm"
+                            className={cn(
+                              "text-xs text-muted-foreground",
+                              currentPage === item.page && "text-foreground font-medium"
+                            )}
+                          >
+                            <Icon className="size-4" />
+                            <span>{item.label}</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+          <div className="flex-1 flex flex-col">
+            <Header currentPage={currentPage} onNavigate={handlePageChange} menuItems={menuItems} />
+            <SymbolPalette onNavigateToTools={() => handlePageChange("tools")} />
+            <Footer />
+          </div>
+        </div>
+      </SidebarProvider>
     );
   }
 
   // 기획약국 페이지 렌더링
   if (currentPage === "tools") {
     return (
-      <div className="min-h-screen bg-background">
-        <Header currentPage={currentPage} onNavigate={handlePageChange} />
-        <ToolDashboard 
-          onNavigateHome={() => handlePageChange("home")}
-          onNavigateToSymbols={() => handlePageChange("symbols")}
-        />
-        <Footer />
-      </div>
+      <SidebarProvider>
+        <div className="flex min-h-screen bg-background">
+          <Sidebar collapsible="none">
+            <SidebarHeader>
+              <div className="flex items-center gap-2 px-2 py-2">
+                <span className="font-semibold text-lg">모달카피</span>
+              </div>
+            </SidebarHeader>
+            <SidebarContent>
+              <SidebarGroup>
+                <SidebarGroupLabel>메뉴</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {menuItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <SidebarMenuItem key={item.id}>
+                          <SidebarMenuButton
+                            onClick={() => handlePageChange(item.page)}
+                            isActive={currentPage === item.page}
+                            tooltip={item.label}
+                            size="sm"
+                            className={cn(
+                              "text-xs text-muted-foreground",
+                              currentPage === item.page && "text-foreground font-medium"
+                            )}
+                          >
+                            <Icon className="size-4" />
+                            <span>{item.label}</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+          <div className="flex-1 flex flex-col">
+            <Header currentPage={currentPage} onNavigate={handlePageChange} menuItems={menuItems} />
+            <ToolDashboard 
+              onNavigateHome={() => handlePageChange("home")}
+              onNavigateToSymbols={() => handlePageChange("symbols")}
+            />
+            <Footer />
+          </div>
+        </div>
+      </SidebarProvider>
     );
   }
 
   // 기획나침반 페이지 렌더링
   if (currentPage === "planning-compass") {
     return (
-      <div className="min-h-screen bg-background">
-        <Header currentPage={currentPage} onNavigate={handlePageChange} />
-        <PlanningCompass />
-        <Footer />
-      </div>
+      <SidebarProvider>
+        <div className="flex min-h-screen bg-background">
+          <Sidebar collapsible="none">
+            <SidebarHeader>
+              <div className="flex items-center gap-2 px-2 py-2">
+                <span className="font-semibold text-lg">모달카피</span>
+              </div>
+            </SidebarHeader>
+            <SidebarContent>
+              <SidebarGroup>
+                <SidebarGroupLabel>메뉴</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {menuItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <SidebarMenuItem key={item.id}>
+                          <SidebarMenuButton
+                            onClick={() => handlePageChange(item.page)}
+                            isActive={currentPage === item.page}
+                            tooltip={item.label}
+                            size="sm"
+                            className={cn(
+                              "text-xs text-muted-foreground",
+                              currentPage === item.page && "text-foreground font-medium"
+                            )}
+                          >
+                            <Icon className="size-4" />
+                            <span>{item.label}</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+          <div className="flex-1 flex flex-col">
+            <Header currentPage={currentPage} onNavigate={handlePageChange} menuItems={menuItems} />
+            <PlanningCompass />
+            <Footer />
+          </div>
+        </div>
+      </SidebarProvider>
     );
   }
 
   // 설계서 작성기 페이지 렌더링
   if (currentPage === "design-description") {
     return (
-      <div className="min-h-screen bg-background">
-        <Header currentPage={currentPage} onNavigate={handlePageChange} />
-        <DesignDescriptionGenerator />
-        <Footer />
-      </div>
+      <SidebarProvider>
+        <div className="flex min-h-screen bg-background">
+          <Sidebar collapsible="none">
+            <SidebarHeader>
+              <div className="flex items-center gap-2 px-2 py-2">
+                <span className="font-semibold text-lg">모달카피</span>
+              </div>
+            </SidebarHeader>
+            <SidebarContent>
+              <SidebarGroup>
+                <SidebarGroupLabel>메뉴</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {menuItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <SidebarMenuItem key={item.id}>
+                          <SidebarMenuButton
+                            onClick={() => handlePageChange(item.page)}
+                            isActive={currentPage === item.page}
+                            tooltip={item.label}
+                            size="sm"
+                            className={cn(
+                              "text-xs text-muted-foreground",
+                              currentPage === item.page && "text-foreground font-medium"
+                            )}
+                          >
+                            <Icon className="size-4" />
+                            <span>{item.label}</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+          <div className="flex-1 flex flex-col">
+            <Header currentPage={currentPage} onNavigate={handlePageChange} menuItems={menuItems} />
+            <DesignDescriptionGenerator />
+            <Footer />
+          </div>
+        </div>
+      </SidebarProvider>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header currentPage={currentPage} onNavigate={handlePageChange} />
+    <SidebarProvider>
+      <div className="flex min-h-screen bg-background">
+        <Sidebar collapsible="none">
+          <SidebarHeader>
+            <div className="flex items-center gap-2 px-2 py-2">
+              <span className="font-semibold text-lg">모달카피</span>
+            </div>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel>메뉴</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {menuItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <SidebarMenuItem key={item.id}>
+                        <SidebarMenuButton
+                          onClick={() => handlePageChange(item.page)}
+                          isActive={currentPage === item.page}
+                          tooltip={item.label}
+                        >
+                          <Icon />
+                          <span>{item.label}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+        <div className="flex-1 flex flex-col">
+          <Header currentPage={currentPage} onNavigate={handlePageChange} menuItems={menuItems} />
       <Hero 
         onStartClick={handleStartClick} 
         onNavigateToTools={() => handlePageChange("tools")}
@@ -872,7 +1113,7 @@ export default function App() {
       {/* Main Input Area */}
       <div
         ref={inputAreaRef}
-        className="max-w-[800px] mx-auto px-6 mb-12"
+        className="w-full max-w-[800px] mx-auto px-6 mb-12"
       >
         <div className="bg-white rounded-xl shadow-md p-8 border border-border">
           {/* Brand Tone Description */}
@@ -1011,7 +1252,7 @@ export default function App() {
       {results && results.length > 0 && (
         <div
           id="results"
-          className="max-w-[800px] mx-auto px-6 mb-12"
+          className="w-full max-w-[800px] mx-auto px-6 mb-12"
         >
           <div className="mb-6">
             <h2>생성된 문구</h2>
@@ -1078,7 +1319,9 @@ export default function App() {
         </div>
       )}
 
-      <Footer />
-    </div>
+          <Footer />
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }

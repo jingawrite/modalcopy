@@ -592,14 +592,8 @@ export function DesignDescriptionGenerator() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full">
       <div className="max-w-[1000px] mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">설계서 작성기</h1>
-          <p className="text-muted-foreground mb-6">
-            화면 타입을 선택하면 설계서 디스크립션 샘플을 자동으로 생성합니다.
-          </p>
-        </div>
 
         {/* 체크리스트 및 입력 필드 */}
         <Card className="mb-6">
